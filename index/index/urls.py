@@ -1,5 +1,5 @@
 """
-URL configuration for edu_system project.
+URL configuration for index project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -16,13 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from login import views as login_views
-from index import views as index_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',index_views.index,name='index'),
-    path('index/',index_views.index,name='index'),
-    path('login/',login_views.login,name='login_page'),
-
 ]
