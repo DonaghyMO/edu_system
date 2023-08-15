@@ -17,7 +17,7 @@ def login(request):
             template = loader.get_template("login/login.html")
             return HttpResponse(template.render())
         else:
-            response = HttpResponseRedirect('/index')
+            response = HttpResponseRedirect('/index/')
             response.set_cookie('user', name)
             return response
     template = loader.get_template("login/login.html")

@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>welcome</title>
-</head>
-<body>
-<form action="/index/" method="post">
-
-    <h2>资源管理平台</h2>
-      <input type="text" id="name" name="name" placeholder="请输入用户名">
-      <input type="password" id ="password" name="password" placeholder="请输入密码">
-    <button type="submit">登录</button><br>
-  </form>
-</body>
-</html>
+{% extends 'base/base.html' %}
+{% block content%}
+<a href="/videos/">视频管理</a>
+<a href="">音频管理</a>
+<a href="">教案</a>
+{% endblock %}

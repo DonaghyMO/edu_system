@@ -1,0 +1,34 @@
+<!-- template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Resource</title>
+</head>
+<body>
+    <button id="delete-button" data-resource-id="{{ resource_id }}">Delete Resource</button>
+
+    <script>
+        document.getElementById("delete-button").addEventListener("click", function() {
+            var resourceId = this.getAttribute("data-resource-id");
+            var confirmDelete = confirm("Are you sure you want to delete this resource?");
+
+            if (confirmDelete) {
+                // 执行删除操作
+                fetch(`/delete-resource/${resourceId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Resource deleted successfully.");
+                            // 如果需要，可以执行其他操作，比如刷新页面
+                        } else {
+                            alert("Failed to delete resource.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+{% block content%}
+
+<a href="/video/upload/">上传视频</a>
+<hr>
+<div class="video_box">
+<ol>
+    {%for item in videos%}
+    <li>
+        <b>视频名：{{ item.title }}</b><br>
+        <b>操作：</b><button class="delete-button" data-resource-id="{{ item.id }}">刪除</button><br>
+
+        <video class="video" width="320" height="240" controls="controls" controlslist="nodownload"
+               disablePictureInPicture>
+            <source src="{{ item.video_file.url }}" type="video/mp4">
+        </video>
+
+    </li>
+    <hr>
+    {% endfor %}
+</ol>
+<br>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+        var deleteButtons = document.querySelectorAll('.delete-button');
+
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var resourceId = button.getAttribute('data-resource-id');
+                var confirmDelete = confirm('确定要删除这个资源吗？');
+
+                if (confirmDelete) {
+                    fetch(`/video/delete/${resourceId}/`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 在删除成功后更新前端界面
+                        button.parentElement.remove(); // 从页面中删除对应资源项
+                    })
+                    .catch(error => {
+                        console.error('删除资源时出现错误:', error);
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
