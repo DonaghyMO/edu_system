@@ -1,0 +1,45 @@
+{% extends 'base/base.html' %}
+{% block content%}
+<a href="/user_manage/teachers_index/">返回老师列表页</a>
+<hr>
+    <h2>修改老师信息</h2>
+    <form method="post" enctype="multipart/form-data">
+        <label for="{{ form.username.id_for_label }}">用户名：</label>
+        <input type="text" name="{{ form.username.name }}" value="{{ initial_data.username }}">
+        <br>
+        <label for="{{ form.password.id_for_label }}">用户密码:</label>
+        <input type="text" name="{{ form.password.name }}" value="{{ initial_data.password }}">
+        <br>
+        <label for="{{ form.phone_number.id_for_label }}">电话号码:</label>
+        <input type="text" name="{{ form.phone_number.name }}" value="{{ initial_data.phone_number }}">
+        <br>
+        <button type="submit" id="update-button" >修改</button>
+    </form>
+<button id="delete-button" data-resource-id="{{ teacher_id }}">刪除</button><br>
+<script>
+document.getElementById("delete-button").addEventListener("click", function() {
+        var resourceId = this.getAttribute("data-resource-id");
+        var confirmDelete = confirm("你确认删除这名教师吗？");
+        if (confirmDelete) {
+            // 执行删除操作
+            fetch(`/user_manage/teacher_delete/${resourceId}/`,{method:'DELETE'})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("老师删除成功");
+                        window.location.href = "/user_manage/teachers_index/";
+                        // 如果需要，可以执行其他操作，比如刷新页面
+                    } else {
+                        alert("老师删除失败，请联系后台开发人员");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+    });
+document.getElementById("update-button").addEventListener("click", function() {
+        alert("修改成功！")
+    });
+</script>
+{% endblock %}

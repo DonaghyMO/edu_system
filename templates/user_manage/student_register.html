@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+{% block content%}
+    <h2>添加学生</h2>
+    <form method="post" enctype="multipart/form-data">
+        <label for="{{ form.username.id_for_label }}">用户名：</label>
+        {{ form.username }}
+        <br>
+        <label for="{{ form.password.id_for_label }}">用户密码:</label>
+        {{ form.password}}
+        <br>
+        <label for="{{ form.nick_name.id_for_label }}">昵称:</label>
+        {{ form.nick_name}}
+        <br>
+        <label for="{{ form.phone_number.id_for_label }}">电话号码:</label>
+        {{ form.phone_number}}
+        <br>
+        <label for="{{ form.wechat_id.id_for_label }}">微信id:</label>
+        {{ form.wechat_id }}
+        <br>
+        <label for="{{ form.wechat_name.id_for_label }}">微信名:</label>
+        {{ form.wechat_name }}
+        <br>
+
+        <button type="submit">上传</button>
+    </form>
+{% endblock %}
