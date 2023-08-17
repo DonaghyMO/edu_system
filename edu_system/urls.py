@@ -9,7 +9,9 @@ from resource_manage import views as resource_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index_views.index, name='index'),
+    # 登录页
+    path('',user_views.login, name='login'),
+    path('login/',user_views.login, name='login_index'),
     # 首页
     path('index/', index_views.index, name='index'),
     # 学生管理
@@ -26,7 +28,12 @@ urlpatterns = [
     path('video/upload/', resource_view.upload_video, name='upload_video'),
     path('videos/',resource_view.list_videos,name='video_list'),
     path('videos/<int:video_id>',resource_view.video_detail,name='video_detail'),
-    path('video/delete/<int:video_id>/',resource_view.delete_video,name='delete_video')
+    path('video/delete/<int:video_id>/',resource_view.delete_video,name='delete_video'),
+    # 音频管理
+    path('audio/upload/', resource_view.upload_audio, name='upload_audio'),
+    path('audios/', resource_view.list_audios, name='audio_list'),
+    path('audios/<int:audio_id>', resource_view.audio_detail, name='audio_detail'),
+    path('audio/delete/<int:audio_id>/', resource_view.delete_audio, name='delete_audio')
 ]
 
 if settings.DEBUG:
