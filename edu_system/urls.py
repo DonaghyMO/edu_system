@@ -33,7 +33,12 @@ urlpatterns = [
     path('audio/upload/', resource_view.upload_audio, name='upload_audio'),
     path('audios/', resource_view.list_audios, name='audio_list'),
     path('audios/<int:audio_id>', resource_view.audio_detail, name='audio_detail'),
-    path('audio/delete/<int:audio_id>/', resource_view.delete_audio, name='delete_audio')
+    path('audio/delete/<int:audio_id>/', resource_view.delete_audio, name='delete_audio'),
+    # 教案管理
+    path('text/upload/', resource_view.upload_text, name='upload_text'),
+    path('texts/', resource_view.list_texts, name='text_list'),
+    path('text/update/<int:text_id>', resource_view.text_update, name='text_update'),
+    path('text/delete/<int:text_id>/', resource_view.delete_text, name='delete_text')
 ]
 
 if settings.DEBUG:

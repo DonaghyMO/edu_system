@@ -32,7 +32,7 @@ class Audio(models.Model):
 class Text(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
-    text_file = models.FileField(upload_to='audio/')
+    text_file = models.FileField(upload_to='text/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
     upload_user = models.IntegerField(default=1)

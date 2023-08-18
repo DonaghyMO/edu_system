@@ -1,0 +1,16 @@
+{% extends 'base/base.html' %}
+{% block content%}
+    <h2>修改教案</h2>
+    <form method="post" enctype="multipart/form-data">
+        <label for="{{ form.title.id_for_label }}">文件名</label>
+        {{ form.title }}
+        <br>
+        <label for="{{ form.text_file.id_for_label }}">选择教案文件:</label>
+        {{ form.text_file}}
+        <br>
+        <label for="{{ form.degree.id_for_label }}">选择难度:</label>
+        {{ form.degree }}
+        <br>
+        <button type="submit">上传</button>
+    </form>
+{% endblock %}

@@ -142,9 +142,7 @@ def teacher_update(request, teacher_id):
                     }
     if request.method == 'POST':
         form = TeacherUpdateForm(request.POST, instance=teacher)
-        print(form)
         if form.is_valid():
-            print("form有效")
             form.save()
             teacher = Teacher.objects.get(pk=teacher_id)
             initial_data = {'username': teacher.username,
@@ -153,7 +151,6 @@ def teacher_update(request, teacher_id):
                             }
 
     else:
-        print("已经get了")
         form = TeacherUpdateForm(request.GET)
     return render(request, 'user_manage/teacher_update.html', {"form": form,
                                                                'initial_data': initial_data,
