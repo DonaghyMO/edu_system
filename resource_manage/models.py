@@ -12,6 +12,8 @@ class Video(models.Model):
     upload_user = models.IntegerField(default=1)
     degree = models.IntegerField(choices=DEGREE_CHOICES,default=1)
     comment_id = models.JSONField(null=True)
+    # 类别字段
+    category = models.CharField(blank=True,max_length=50)
 
 
 class Audio(models.Model):
@@ -24,6 +26,8 @@ class Audio(models.Model):
     degree = models.IntegerField(choices=DEGREE_CHOICES,default=1)
     # json存储评论id
     comment_id = models.JSONField(null=True)
+    # 类别字段
+    category = models.CharField(blank=True,max_length=50)
 
     def __str__(self):
         return self.title
@@ -38,3 +42,5 @@ class Text(models.Model):
     upload_user = models.IntegerField(default=1)
     degree = models.IntegerField(choices=DEGREE_CHOICES, default=1)
     comment_id = models.JSONField(null=True)
+    # 类别字段
+    category = models.CharField(blank=True,max_length=50)

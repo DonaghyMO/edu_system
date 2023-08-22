@@ -2,12 +2,18 @@
 {% block content%}
 
 <a href="/audio/upload/">上传音频</a>
+<br>
+<form action="/audios/" method="get">
+    <b>按类别检索:</b><input type="text" name="category_search">
+    <input type="submit" value="检索" />
+</form>
 <hr>
 <div class="audio_box">
 <ol>
     {%for item in audios%}
     <li>
         <b>音频名：{{ item.title }}</b><br>
+        <b>类别：</b>{{ item.category }}<br>
         <b>操作：</b><button class="delete-button" data-resource-id="{{ item.id }}">刪除</button><br>
 
         <audio controls>

@@ -27,7 +27,8 @@ def upload_video(request):
 
 @check_login
 def list_videos(request):
-    videos = Video.objects.all()
+    category_search = request.GET.get("category_search")
+    videos = Video.objects.filter(category=category_search) if category_search else Video.objects.all()
     return render(request, 'resource_manage/video/videos_list.html', {'videos': videos})
 
 
@@ -57,7 +58,8 @@ def delete_video(request, video_id):
 
 @check_login
 def list_audios(request):
-    audios = Audio.objects.all()
+    category_search = request.GET.get("category_search")
+    audios = Audio.objects.filter(category=category_search) if category_search else Audio.objects.all()
     return render(request, 'resource_manage/audio/audio_list.html', {'audios': audios})
 
 
@@ -97,9 +99,13 @@ def delete_audio(request, audio_id):
 
 @check_login
 def list_texts(request):
-    texts = Text.objects.all()
     text_list = []
     if request.method == 'GET':
+        category_search = request.GET.get('category_search')
+        if category_search:
+            texts = Text.objects.filter(category=category_search)
+        else:
+            texts = Text.objects.all()
         for text in texts:
             with open(text.text_file.path) as f:
                 content = f.read()
@@ -108,7 +114,7 @@ def list_texts(request):
                 "title": text.title,
                 "content": content,
                 "id": text.id,
-                "form": form
+                "form": form,
             }
 
             text_list.append(tmp)
@@ -141,7 +147,6 @@ def text_update(request, text_id):
         name = "content_"+str(text_id)
         content = request.POST.get(name)
         text = Text.objects.get(id=text_id)
-        print(content)
         with open(text.text_file.path,"w") as f:
             f.write(content)
     else:

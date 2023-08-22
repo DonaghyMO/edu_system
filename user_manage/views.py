@@ -35,6 +35,7 @@ def check_password(name, password):
     :param password:
     :return:
     """
+    # TODO：用户不存在的时候需要处理
     user = Teacher.objects.get(username=name)
     # 没有此用户
     if not user:
@@ -53,12 +54,8 @@ def student_index(request):
     # 按条件搜索
     if request.GET.get is not None:
         students = Student.objects.all()
-        for i in students:
-            print(i.username)
     else:
         students = Student.objects.all()
-        for i in students:
-            print(i.username)
     return render(request, 'user_manage/student_manage_index.html', {'students': students})
 
 

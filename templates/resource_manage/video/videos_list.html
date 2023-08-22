@@ -2,6 +2,10 @@
 {% block content%}
 
 <a href="/video/upload/">上传视频</a>
+<form action="/videos/" method="get">
+    <b>按类别检索:</b><input type="text" name="category_search">
+    <input type="submit" value="检索" />
+</form>
 <hr>
 <div class="video_box">
 <ol>
@@ -9,7 +13,7 @@
     <li>
         <b>视频名：{{ item.title }}</b><br>
         <b>操作：</b><button class="delete-button" data-resource-id="{{ item.id }}">刪除</button><br>
-
+        <b>类别：</b>{{ item.category }}<br>
         <video class="video" width="320" height="240" controls="controls" controlslist="nodownload"
                disablePictureInPicture>
             <source src="{{ item.video_file.url }}" type="video/mp4">
