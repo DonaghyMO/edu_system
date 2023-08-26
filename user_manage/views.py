@@ -47,8 +47,10 @@ def check_password(name, password):
     :param password:
     :return:
     """
-    # TODO：用户不存在的时候需要处理
-    user = Teacher.objects.get(username=name)
+    try:
+        user = Teacher.objects.get(username=name)
+    except Teacher.DoesNotExist:
+        return False
     # 没有此用户
     if not user:
         return False
