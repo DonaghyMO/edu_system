@@ -28,6 +28,18 @@ def login(request):
     return HttpResponse(template.render())
 
 
+def logout(request):
+    """
+    登出操作
+    """
+    template = loader.get_template("user_manage/login.html")
+    response = HttpResponse(template.render())
+
+    # 设置cookie的过期时间为一个过去的时间，从而使其失效
+    response.delete_cookie("user")
+
+    return response
+
 def check_password(name, password):
     """
     校验密码

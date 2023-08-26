@@ -12,6 +12,8 @@ urlpatterns = [
     # 登录页
     path('',user_views.login, name='login'),
     path('login/',user_views.login, name='login_index'),
+    # 登出
+    path('logout/',user_views.logout, name='logout'),
     # 首页
     path('index/', index_views.index, name='index'),
     # 学生管理
