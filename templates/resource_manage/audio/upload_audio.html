@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+{% block content%}
+    <h2>上传一条音频</h2>
+    <form method="post" enctype="multipart/form-data">
+        <label for="{{ form.title.id_for_label }}">文件名</label>
+        {{ form.title }}
+        <br>
+        <label for="{{ form.audio_file.id_for_label }}">选择视频文件:</label>
+        {{ form.audio_file }}
+        <br>
+        <label for="{{ form.degree.id_for_label }}">选择难度:</label>
+        {{ form.degree }}
+        <br>
+        <label for="{{ form.category.id_for_label }}">类别（用于检索）:</label>
+        {{ form.category}}
+        <br>
+        <button type="submit">上传</button>
+    </form>
+{% endblock %}

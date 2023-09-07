@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+{% block content%}
+<b>{{ video_title }}</b>
+<br>
+<video class="video" controls="controls" controlslist="nodownload"
+       disablePictureInPicture>
+    <source src="{{ video_url }}" type="video/mp4">
+</video>
+<button id="delete-button" data-resource-id="{{ video_id }}">刪除</button>
+
+<script>
+    document.getElementById("delete-button").addEventListener("click", function() {
+        var resourceId = this.getAttribute("data-resource-id");
+        var confirmDelete = confirm("你确认删除这条视频吗？");
+
+        if (confirmDelete) {
+            // 执行删除操作
+            fetch(`/video/delete_resource/${resourceId}/`,{method:'DELETE'})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("视频删除成功");
+                        window.location.href = "/videos/";
+                        // 如果需要，可以执行其他操作，比如刷新页面
+                    } else {
+                        alert("视频删除失败，请联系后台开发人员");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+    });
+</script>

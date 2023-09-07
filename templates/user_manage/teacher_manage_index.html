@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% block content%}
+<a href="/user_manage/teacher_register/">添加老师</a>
+<hr>
+
+<ol>
+{% for item in teachers %}
+<li>
+
+       <b><a href="/user_manage/teacher_update/{{ item.id }}">{{item.username}}</a></b>
+
+</li>
+{% endfor %}
+</ol>
+{% endblock %}

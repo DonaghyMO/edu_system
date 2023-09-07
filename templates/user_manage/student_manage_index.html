@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% block content%}
+<a href="/user_manage/students_register/">添加学生</a>
+<hr>
+
+<ol>
+{%for item in students%}
+<li>
+
+       <b><a href="/user_manage/students_update/{{ item.id }}">{{item.username}}</a></b>
+
+</li>
+{% endfor %}
+</ol>
+{% endblock %}

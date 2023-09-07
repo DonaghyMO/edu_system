@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>资源管理</title>
+    <style>
+        #myTextarea {
+            width: 300px;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+   <a href="/index/">首页</a>
+   <hr>
+<a href="/text/upload/">上传教案</a>
+<form action="/texts/" method="get">
+    <b>按类别检索:</b><input type="text" name="category_search">
+    <input type="submit" value="检索" />
+</form>
+<hr>
+<div class="text_box">
+<ol>
+    {%for item in texts %}
+    <li>
+        <b>教案名：{{ item.title }}</b><br>
+        <b>操作：</b><button class="delete-button" data-resource-id="{{ item.id }}">刪除</button>
+        <br>
+        <form method="post" enctype="multipart/form-data">
+            <label for="{{ item.form.title.id_for_label }}">文件名</label>
+            {{ item.form.title }}
+            <br>
+            <label for="{{ item.form.text_file.id_for_label }}">选择教案文件:</label>
+            {{ item.form.text_file}}
+            <br>
+            <label for="{{ item.form.degree.id_for_label }}">选择难度:</label>
+            {{ item.form.degree}}
+            <br>
+            <label for="{{ item.form.category.id_for_label }}">类别:</label>
+            {{ item.form.category }}
+            <br>
+            <input type="hidden" name="text_id" value="{{ item.id }}">
+            <button type="submit">修改</button>
+        </form>
+
+    </li>
+    <hr>
+    {% endfor %}
+</ol>
+<br>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+        var deleteButtons = document.querySelectorAll('.delete-button');
+
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var resourceId = button.getAttribute('data-resource-id');
+                var confirmDelete = confirm('确定要删除这个资源吗？');
+
+                if (confirmDelete) {
+                    fetch(`/text/delete/${resourceId}/`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 在删除成功后更新前端界面
+                        button.parentElement.remove(); // 从页面中删除对应资源项
+                    })
+                    .catch(error => {
+                        console.error('删除资源时出现错误:', error);
+                    });
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
