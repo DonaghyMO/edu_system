@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'user_manage',
     'index',
     'resource_manage',
-    'communication'
+    'communication',
+    'chenlu'
 ]
 
 MIDDLEWARE = [
