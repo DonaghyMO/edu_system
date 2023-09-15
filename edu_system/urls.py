@@ -48,7 +48,8 @@ urlpatterns = [
     # 微信相关
     path('wechat/notification/',wechat_view.get_notifications,name='get_notifications'),
     path('wechat/notification/publish',wechat_view.publish_notification,name='post_notification'),
-    path('wechat/notification/withdraw',wechat_view.withdraw_notification,name='withdraw_notification')
+    path('wechat/notification/withdraw',wechat_view.withdraw_notification,name='withdraw_notification'),
+    path('wechat/notification/wx_notification',wechat_view.wc_get_notifications)
 ]
 
 if settings.DEBUG:
