@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'index',
     'resource_manage',
     'communication',
-    'chenlu'
+    'chenlu',
+    'wechat_req'
 ]
 
 MIDDLEWARE = [

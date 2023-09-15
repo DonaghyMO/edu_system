@@ -6,6 +6,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from resource_manage import views as resource_view
+from wechat_req import views as wechat_view
 from chenlu import views as chenlu_view
 
 urlpatterns = [
@@ -43,7 +44,11 @@ urlpatterns = [
     path('text/update/<int:text_id>', resource_view.text_update, name='text_update'),
     path('text/delete/<int:text_id>/', resource_view.delete_text, name='delete_text'),
     path('resource/download/<int:resource_type>/<str:resource_name>',resource_view.download_resource,name='download_resource'),
-    path('chenlu/',chenlu_view.chenlu_empty_page,name='chenlu_page')
+    path('chenlu/',chenlu_view.chenlu_empty_page,name='chenlu_page'),
+    # 微信相关
+    path('wechat/notification/',wechat_view.get_notifications,name='get_notifications'),
+    path('wechat/notification/publish',wechat_view.publish_notification,name='post_notification'),
+    path('wechat/notification/withdraw',wechat_view.withdraw_notification,name='withdraw_notification')
 ]
 
 if settings.DEBUG:

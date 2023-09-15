@@ -1,0 +1,70 @@
+{% extends 'base/base.html' %}
+{% block content%}
+<style>
+       .box{
+         background-color: skyblue; /* 设置背景颜色为蓝色 */
+         /* 可以添加其他样式属性，如宽度、高度、内边距等 */
+         width: 100%;
+         padding: 10px;
+         border-radius: 10px;
+         box-sizing:border-box;
+         margin:5px;
+       }
+       .studentSpan{
+           width:30px;
+           padding:10px;
+           background-color:pink;
+           border-radius: 10px;
+           margin:4px;
+       }
+       .teacherSpan{
+           width:30px;
+           padding:10px;
+           background-color:grey;
+           border-radius: 10px;
+           margin:4px;
+       }
+        .text-container {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: left;
+            font-size: 18px;
+        }
+</style>
+<b>通知页</b>
+<br>
+<a href="/wechat/notification/publish">发通知</a>
+<hr>
+{%for item in notifications%}
+<li>
+       <div class="box">
+              发送用户：
+              学生：
+              {% for i in item.students %}
+                     <span class="studentSpan">{{i}}</span>
+              {% endfor %}
+              老师：
+              {% for i in item.teachers %}
+                     <span class="teacherSpan">{{ i }}</span>
+              {% endfor %}
+              <br>
+              <span>消息状态:</span>
+              {% if item.status == 0 %}
+              <span style="background-color:lightgreen;border-radius:5px">已传达</span>
+              {% elif item.status == 1 %}
+              <span style="background-color:red;border-radius:5px">已撤回</span>
+              {% endif %}
+              <form action="withdraw" method="POST">
+                     <input type="hidden" name='withdraw_id' value="{{ item.id }}">
+                     <button type="submit">点我撤回消息</button>
+              </form>
+              <br>
+              通知内容：<div class="text-container">{{ item.content }}</div>
+       </div>
+
+</li>
+
+{% endfor %}
+{% endblock %}
