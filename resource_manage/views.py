@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from resource_manage.forms import VideoUploadForm,AudioUploadForm,TextUploadForm,TextUpdateForm
 from resource_manage.models import Video,Audio,Text
 from my_decorater import check_login
-from django.http import JsonResponse
+from django.http import JsonResponse,FileResponse
 
 
 # Create your views here.
@@ -171,3 +171,19 @@ def delete_text(request, text_id):
     else:
         return JsonResponse({'error': '无效的请求方法'}, status=400)
 
+@ check_login
+def download_resource(request,resource_type,resource_name):
+    from edu_system.settings import BASE_DIR
+    if resource_type==1:# 视频类型
+        file_path = os.path.join(BASE_DIR,'upload','videos',resource_name)
+    elif resource_type==2:# 音频类型
+        file_path = os.path.join(BASE_DIR,'upload','audios',resource_name)
+    elif resource_type==3:# 文本类型
+        file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
+    else:
+        file_path = os.path.join(BASE_DIR, 'static','redirect.js',)
+    file = open(file_path,'rb')
+    response = FileResponse(file)
+    if resource_type==4:
+        response['Content-Type'] = "text/js"
+    return response
