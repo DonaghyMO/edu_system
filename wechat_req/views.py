@@ -26,17 +26,12 @@ def get_notifications(request):
         user = json.loads(item.target_users)
         # 先查教师名
         teachers = user.get('teacher')
-        query = Q()
-        for id in teachers:
-            query |= Q(id=id)
-        results = Teacher.objects.filter(query)
+        # teacher_names = []
+        results = Teacher.objects.filter(id__in=teachers)
         teacher_names = [i.username for i in results]
         # 再查学生
         students = user.get('student')
-        query = Q()
-        for id in students:
-            query |= Q(id=id)
-        results = Student.objects.filter(query)
+        results = Student.objects.filter(id__in=students)
         student_names = [i.username for i in results]
         item.teachers = teacher_names
         item.students = student_names
@@ -48,6 +43,7 @@ def publish_notification(request):
     """
     发布通知
     """
+    print(request.POST.keys())
     if request.method == 'POST':
         if 'content' not in request.POST.keys() or len(request.POST.keys()) < 2:
             return redirect('get_notifications')
@@ -55,6 +51,8 @@ def publish_notification(request):
         # TODO:这里应该有更好的实现
         teachers = []
         students = []
+        for item in request.POST.items():
+            print(item)
         for key, value in request.POST.items():
             if "teacher" in key:
                 teachers.append(int(value))
