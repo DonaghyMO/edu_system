@@ -1,9 +1,9 @@
 import os
 from django.shortcuts import render, redirect
-from resource_manage.forms import VideoUploadForm,AudioUploadForm,TextUploadForm,TextUpdateForm
-from resource_manage.models import Video,Audio,Text
+from resource_manage.forms import VideoUploadForm, AudioUploadForm, TextUploadForm, TextUpdateForm
+from resource_manage.models import Video, Audio, Text
 from my_decorater import check_login
-from django.http import JsonResponse,FileResponse
+from django.http import JsonResponse, FileResponse
 
 
 # Create your views here.
@@ -74,12 +74,14 @@ def upload_audio(request):
         form = AudioUploadForm()
     return render(request, 'resource_manage/audio/upload_audio.html', {'form': form})
 
+
 @check_login
 def audio_detail(request, video_id):
     video = Video.objects.get(id=video_id)
     return render(request, 'resource_manage/video/audio_manage.html', {'video_url': video.video_file.url,
                                                                        'video_title': video.title,
                                                                        'video_id': video.id})
+
 
 @check_login
 def delete_audio(request, audio_id):
@@ -114,6 +116,7 @@ def list_texts(request):
                 "title": text.title,
                 "content": content,
                 "id": text.id,
+                "description": text.description,
                 "form": form,
             }
 
@@ -144,15 +147,15 @@ def upload_text(request):
 @check_login
 def text_update(request, text_id):
     if request.method == 'POST':
-        name = "content_"+str(text_id)
+        name = "content_" + str(text_id)
         content = request.POST.get(name)
         text = Text.objects.get(id=text_id)
-        with open(text.text_file.path,"w") as f:
+        with open(text.text_file.path, "w") as f:
             f.write(content)
     else:
         text = Text.objects.get(id=text_id)
         form = TextUploadForm(instance=text)
-        return render(request, 'resource_manage/text/text_update.html',{'form':form})
+        return render(request, 'resource_manage/text/text_update.html', {'form': form})
     return redirect("text_list")
 
 
@@ -171,19 +174,21 @@ def delete_text(request, text_id):
     else:
         return JsonResponse({'error': '无效的请求方法'}, status=400)
 
-@ check_login
-def download_resource(request,resource_type,resource_name):
+
+# @ check_login
+def download_resource(request, resource_type, resource_name):
     from edu_system.settings import BASE_DIR
-    if resource_type==1:# 视频类型
-        file_path = os.path.join(BASE_DIR,'upload','videos',resource_name)
-    elif resource_type==2:# 音频类型
-        file_path = os.path.join(BASE_DIR,'upload','audios',resource_name)
-    elif resource_type==3:# 文本类型
+    if resource_type == 'video':  # 视频类型
+        file_path = os.path.join(BASE_DIR, 'upload', 'videos', resource_name)
+    elif resource_type == 'audio':  # 音频类型
+        file_path = os.path.join(BASE_DIR, 'upload', 'audio', resource_name)
+    elif resource_type == 'text':  # 文本类型
         file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
     else:
-        file_path = os.path.join(BASE_DIR, 'static','redirect.js',)
-    file = open(file_path,'rb')
+        file_path = os.path.join(BASE_DIR, 'static', 'redirect.js', )
+    file = open(file_path, 'rb')
     response = FileResponse(file)
-    if resource_type==4:
+    if resource_type == 4:
         response['Content-Type'] = "text/js"
     return response
+

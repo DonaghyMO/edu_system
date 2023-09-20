@@ -43,13 +43,17 @@ urlpatterns = [
     path('texts/', resource_view.list_texts, name='text_list'),
     path('text/update/<int:text_id>', resource_view.text_update, name='text_update'),
     path('text/delete/<int:text_id>/', resource_view.delete_text, name='delete_text'),
-    path('resource/download/<int:resource_type>/<str:resource_name>',resource_view.download_resource,name='download_resource'),
+    path('resource/download/<str:resource_type>/<str:resource_name>',resource_view.download_resource,name='download_resource'),
     path('chenlu/',chenlu_view.chenlu_empty_page,name='chenlu_page'),
     # 微信相关
     path('wechat/notification/',wechat_view.get_notifications,name='get_notifications'),
     path('wechat/notification/publish',wechat_view.publish_notification,name='post_notification'),
     path('wechat/notification/withdraw',wechat_view.withdraw_notification,name='withdraw_notification'),
-    path('wechat/notification/wx_notification',wechat_view.wc_get_notifications)
+    path('wechat/notification/wx_notification',wechat_view.wc_get_notifications),
+    path('wechat/login',wechat_view.wc_login,name='wc_login'),
+    path('wechat/resource_list',wechat_view.wc_get_resource_list,name='wc_resource_list'),
+    path('wechat/resource_detail',wechat_view.wc_resource_detail,name='wc_resource_detail'),
+    path('wechat/user_info',wechat_view.wc_get_user_info,name='wc_get_user_info')
 ]
 
 if settings.DEBUG:

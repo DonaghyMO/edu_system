@@ -39,6 +39,9 @@
             <label for="{{ item.form.category.id_for_label }}">类别:</label>
             {{ item.form.category }}
             <br>
+            <label for="{{ item.description.id_for_label }}">描述:</label>
+            {{ item.form.description}}
+            <br>
             <input type="hidden" name="text_id" value="{{ item.id }}">
             <button type="submit">修改</button>
         </form>

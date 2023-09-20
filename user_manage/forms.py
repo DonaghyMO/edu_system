@@ -7,7 +7,7 @@ class StudentRegisterForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ('username','password','nick_name',
-                  'phone_number','wechat_id','wechat_name')
+                  'phone_number')
 
 class TeacherRegisterForm(forms.ModelForm):
     class Meta:

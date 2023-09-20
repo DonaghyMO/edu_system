@@ -100,14 +100,14 @@ def student_update(request, stu_id):
             form.save()
             initial_data = {'username': stu.username,
                             'password': stu.password, 'nick_name': stu.nick_name,
-                            'phone_number': stu.phone_number, 'wechat_id': stu.wechat_id,
+                            'phone_number': stu.phone_number,
                             'wechat_name': stu.wechat_name
                             }
 
     else:
         initial_data = {'username': stu.username,
                         'password': stu.password, 'nick_name': stu.nick_name,
-                        'phone_number': stu.phone_number, 'wechat_id': stu.wechat_id,
+                        'phone_number': stu.phone_number,
                         'wechat_name': stu.wechat_name
                         }
         form = StudentRegisterForm(request.GET)

@@ -14,6 +14,7 @@
         <b>视频名：{{ item.title }}</b><br>
         <b>操作：</b><button class="delete-button" data-resource-id="{{ item.id }}">刪除</button><br>
         <b>类别：</b>{{ item.category }}<br>
+        <b>类别：</b>{{ item.description }}<br>
         <video class="video" width="320" height="240" controls="controls" controlslist="nodownload"
                disablePictureInPicture>
             <source src="{{ item.video_file.url }}" type="video/mp4">
