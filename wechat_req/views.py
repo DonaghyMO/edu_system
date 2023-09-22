@@ -1,14 +1,16 @@
 import json
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from .models import Notification,ChatContent
+from .models import Notification, ChatContent
 from my_decorater import check_login
 from resource_manage.models import Audio, Text, Video
 from user_manage.models import Teacher, Student
 from django.db.models import Q
 import requests
+from .utils import check_invite_code
 from edu_system.settings import BASE_DIR
 import os
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 """
@@ -83,6 +85,7 @@ def withdraw_notification(request):
         notification.save()
     return redirect('get_notifications')
 
+
 def delete_notification(request):
     """
     撤回通知
@@ -93,7 +96,7 @@ def delete_notification(request):
         notification = Notification.objects.get(id=delete_id)
         notification.status = 2
         notification.save()
-    return HttpResponse("已删除",status=200)
+    return HttpResponse("已删除", status=200)
 
 
 def wc_login(request):
@@ -103,33 +106,76 @@ def wc_login(request):
     if request.method != 'POST':
         return HttpResponse("请求方式有误", status=400)
     data = json.loads(request.body.decode('utf-8'))
-    nick_name = data.get("nick_name")
-    code = data.get("code")
     user_type = data.get("user_type")
-    # 向微信服务器发送请求以获取用户信息
-    url = f'https://api.weixin.qq.com/sns/jscode2session?appid=wxd44159a044a585ad&secret=bc0363f718cdfb030d6d867f32b6d521&js_code={code}&grant_type=authorization_code'
-    response = requests.get(url)
-    data = response.json()
-    # 从微信服务器返回的数据中获取用户的唯一标识 openid
-    openid = data.get('openid')
+    password = data.get("password")
+    username = data.get("username")
 
     # 检查用户是否已经存在，如果不存在，则创建用户
     try:
         # TODO：校验是否是老师用户
-        user = Teacher.objects.get(openid=openid) if user_type == "teacher" else Student.objects.get(openid=openid)
-    except Teacher.DoesNotExist:
-        user = Teacher(username=nick_name,
-                       openid=openid,
-                       is_admin=0,
-                       wechat_name=nick_name)
-        user.save()
-    except Student.DoesNotExist:
-        user = Student(username=nick_name, nick_name=nick_name, openid=openid, wechat_name=nick_name)
-        user.save()
-    # 创建用户会话，处理用户登录状态
+        user = Teacher.objects.get(username=username) if user_type == "teacher" else Student.objects.get(
+            username=username)
+        if user.password != password:
+            return JsonResponse({"message": "密码错误", "status": "fail"}, status=200)
+    except ObjectDoesNotExist:
+        return JsonResponse({"message": "用户不存在", "status": "fail"}, status=200)
     # 这里需要自行实现用户登录逻辑，例如使用 Token 或 Session 等方式
-    rejson = {"user_id": user.id, "user_type": user_type, "openid": openid}
+    rejson = {"message":"登录成功","status": "success", "user_id": user.id, "user_type": user_type, "openid": user.openid}
     return JsonResponse(rejson, status=200)
+
+
+def wc_register(request):
+    """
+    注册功能
+    """
+    if request.method != 'POST':
+        return HttpResponse("请求方式有误", status=400)
+    data = json.loads(request.body.decode('utf-8'))
+    username = data.get("username")
+    password = data.get("password")
+    wechat_name = data.get("wechat_name")
+    invite_code = data.get("invite_code")
+    code = data.get("code")
+    # 获取openid
+    url = f'https://api.weixin.qq.com/sns/jscode2session?appid=wxd44159a044a585ad&secret=bc0363f718cdfb030d6d867f32b6d521&js_code={code}&grant_type=authorization_code'
+    response = requests.get(url)
+    rdata = response.json()
+    # 从微信服务器返回的数据中获取用户的唯一标识 openid
+    openid = rdata.get('openid')
+    # 学生用户注册
+    if not invite_code:
+        try:
+            Student.objects.get(username=username)
+            return JsonResponse({"message": "用户名已注册", "status": "fail"}, status=200)
+        except Student.DoesNotExist:
+            if Student.objects.filter(openid=openid):
+                return JsonResponse({"message": "此微信号已经进行过注册", "status": "fail"}, status=200)
+            stu = Student(username=username,
+                          password=password,
+                          nick_name=wechat_name,
+                          wechat_name=wechat_name,
+                          openid=openid
+                          )
+            stu.save()
+    # 教师用户注册
+    else:
+        # 邀请吗校验
+        if not check_invite_code(invite_code):
+            return JsonResponse({"message": "邀请码错误", "status": "fail"}, status=200)
+        try:
+            Teacher.objects.get(username=username)
+            return JsonResponse({"message": "用户名已注册", "status": "fail"}, status=200)
+        except Teacher.DoesNotExist:
+            if Teacher.objects.filter(openid=openid):
+                return JsonResponse({"message": "此微信号已经进行过注册", "status": "fail"}, status=200)
+            tea = Teacher(username=username,
+                          password=password,
+                          nick_name=wechat_name,
+                          wechat_name=wechat_name,
+                          openid=openid)
+            tea.save()
+
+    return JsonResponse({"message": "注册成功", "status": "fail"}, status=200)
 
 
 def wc_get_notifications(request):
@@ -147,8 +193,8 @@ def wc_get_notifications(request):
         # 这个学生收到了这个消息
         if user_id in users:
             tmp.append(item)
-    notifications = [{"content":item.content,
-                      "id":item.id} for item in tmp]
+    notifications = [{"content": item.content,
+                      "id": item.id} for item in tmp]
     return JsonResponse(notifications, safe=False)
 
 
@@ -178,13 +224,12 @@ def wc_search_resource(request):
         return JsonResponse({"resource_list": resource_list})
     # 音频
     for item in Audio.objects.filter(title__icontains=keyword):
-        resource_list.append({"type":"audio", "title": item.title, "resource_id": item.id})
+        resource_list.append({"type": "audio", "title": item.title, "resource_id": item.id})
     for item in Text.objects.filter(title__icontains=keyword):
-        resource_list.append({"type":"text", "title": item.title, "resource_id": item.id})
+        resource_list.append({"type": "text", "title": item.title, "resource_id": item.id})
     for item in Video.objects.filter(title__icontains=keyword):
-        resource_list.append({"type":"video", "title": item.title, "resource_id": item.id})
-    return JsonResponse({"resource_list":resource_list},status=200)
-
+        resource_list.append({"type": "video", "title": item.title, "resource_id": item.id})
+    return JsonResponse({"resource_list": resource_list}, status=200)
 
 
 def wc_resource_detail(request):
@@ -203,13 +248,13 @@ def wc_resource_detail(request):
         resource = Text.objects.get(id=resource_id)
         resource_name = str(resource.text_file).split('text/')[1]
         file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
-        with open(file_path,'r') as f:
+        with open(file_path, 'r') as f:
             data = f.read()
         return JsonResponse({
-            "content":data,
-            "description":resource.description,
+            "content": data,
+            "description": resource.description,
             "title": resource.title
-        },status=200)
+        }, status=200)
     description = resource.description
     title = resource.title
     resource_url = "resource/download/{}/{}".format(resource_type, resource_name)
@@ -220,6 +265,7 @@ def wc_resource_detail(request):
     }
     return JsonResponse(data, status=200)
 
+
 def wc_get_user_info(request):
     """
     获取微信用户信息
@@ -227,7 +273,7 @@ def wc_get_user_info(request):
     user_id = request.GET.get("user_id")
     user_type = request.GET.get("user_type")
     user = Teacher.objects.get(id=user_id) if user_type == "teacher" else Student.objects.get(id=user_id)
-    return JsonResponse({"user_name":user.username})
+    return JsonResponse({"user_name": user.username})
 
 
 def wc_get_teachers(request):
@@ -236,11 +282,11 @@ def wc_get_teachers(request):
     """
     teachers = Teacher.objects.all()
     data = [{
-        "username":t.username,
-        "teacher_id":t.id,
+        "username": t.username,
+        "teacher_id": t.id,
 
-             } for t in teachers]
-    return JsonResponse(data,status=200,safe=False)
+    } for t in teachers]
+    return JsonResponse(data, status=200, safe=False)
 
 
 def wc_get_chat_content(request):
@@ -248,20 +294,20 @@ def wc_get_chat_content(request):
     获取聊天内容
     return [{"user_id":user_id,"content":content}]
     """
-    if request.method=="GET":
+    if request.method == "GET":
         teacher_id = request.GET.get("teacher_id")
         student_id = request.GET.get("student_id")
         try:
-            chat_content = ChatContent.objects.get(teacher_id=teacher_id,student_id=student_id)
+            chat_content = ChatContent.objects.get(teacher_id=teacher_id, student_id=student_id)
         except ChatContent.DoesNotExist:
-            chat_content = ChatContent(teacher_id=teacher_id,student_id=student_id,content=json.dumps({}))
+            chat_content = ChatContent(teacher_id=teacher_id, student_id=student_id, content=json.dumps({}))
             chat_content.save()
         content = json.loads(chat_content.content)
-        return JsonResponse({"content":content,"id":chat_content.id},status=200)
+        return JsonResponse({"content": content, "id": chat_content.id}, status=200)
 
 
 def wc_post_chat_content(request):
     """
     上传聊天内容
     """
-    return HttpResponse("上传成功",status=200)
+    return HttpResponse("上传成功", status=200)

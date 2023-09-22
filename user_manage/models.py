@@ -10,8 +10,10 @@ class Teacher(models.Model):
     id = models.AutoField(primary_key=True)
     # 默认微信
     username = models.CharField(max_length=50,unique=True)
+    # 昵称 默认为为新名
+    nick_name = wechat_name = models.CharField(max_length=50, null=True)
     password = models.CharField(max_length=50,null=True)
-    is_admin = models.IntegerField(choices=ADMIN_CHOICES)
+    is_admin = models.IntegerField(choices=ADMIN_CHOICES,default=0)
     phone_number = models.CharField(max_length=13,default="")
     # json形式存储课程列表
     courses = models.JSONField(null=True)
