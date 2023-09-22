@@ -1,7 +1,7 @@
 import json
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from .models import Notification
+from .models import Notification,ChatContent
 from my_decorater import check_login
 from resource_manage.models import Audio, Text, Video
 from user_manage.models import Teacher, Student
@@ -83,6 +83,18 @@ def withdraw_notification(request):
         notification.save()
     return redirect('get_notifications')
 
+def delete_notification(request):
+    """
+    撤回通知
+    """
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        delete_id = int(data.get('delete_id'))
+        notification = Notification.objects.get(id=delete_id)
+        notification.status = 2
+        notification.save()
+    return HttpResponse("已删除",status=200)
+
 
 def wc_login(request):
     """
@@ -122,11 +134,11 @@ def wc_login(request):
 
 def wc_get_notifications(request):
     """
-    为新获得通知接口
+    微信获得通知接口
     """
     user_id = int(request.GET.get("user_id"))
     user_type = request.GET.get('user_type')
-    notifications = Notification.objects.all()
+    notifications = Notification.objects.filter(status=0)
     tmp = []
     for item in notifications:
         # 1是老师，0是学生
@@ -135,16 +147,9 @@ def wc_get_notifications(request):
         # 这个学生收到了这个消息
         if user_id in users:
             tmp.append(item)
-    notifications = [item.content for item in tmp]
-    return JsonResponse(data=notifications, safe=False)
-
-
-"""
-搜索页面
-"""
-"""
-我页面
-"""
+    notifications = [{"content":item.content,
+                      "id":item.id} for item in tmp]
+    return JsonResponse(notifications, safe=False)
 
 
 def wc_get_resource_list(request):
@@ -161,6 +166,25 @@ def wc_get_resource_list(request):
     if resource_type == "text":
         resource_list = [{"title": item.title, "resource_id": item.id} for item in Text.objects.all()]
     return JsonResponse({"resource_list": resource_list}, status=200)
+
+
+def wc_search_resource(request):
+    """
+    按关键字搜索资源
+    """
+    keyword = request.GET.get("keyword")
+    resource_list = []
+    if not keyword:
+        return JsonResponse({"resource_list": resource_list})
+    # 音频
+    for item in Audio.objects.filter(title__icontains=keyword):
+        resource_list.append({"type":"audio", "title": item.title, "resource_id": item.id})
+    for item in Text.objects.filter(title__icontains=keyword):
+        resource_list.append({"type":"text", "title": item.title, "resource_id": item.id})
+    for item in Video.objects.filter(title__icontains=keyword):
+        resource_list.append({"type":"video", "title": item.title, "resource_id": item.id})
+    return JsonResponse({"resource_list":resource_list},status=200)
+
 
 
 def wc_resource_detail(request):
@@ -204,3 +228,40 @@ def wc_get_user_info(request):
     user_type = request.GET.get("user_type")
     user = Teacher.objects.get(id=user_id) if user_type == "teacher" else Student.objects.get(id=user_id)
     return JsonResponse({"user_name":user.username})
+
+
+def wc_get_teachers(request):
+    """
+    获取教师列表
+    """
+    teachers = Teacher.objects.all()
+    data = [{
+        "username":t.username,
+        "teacher_id":t.id,
+
+             } for t in teachers]
+    return JsonResponse(data,status=200,safe=False)
+
+
+def wc_get_chat_content(request):
+    """
+    获取聊天内容
+    return [{"user_id":user_id,"content":content}]
+    """
+    if request.method=="GET":
+        teacher_id = request.GET.get("teacher_id")
+        student_id = request.GET.get("student_id")
+        try:
+            chat_content = ChatContent.objects.get(teacher_id=teacher_id,student_id=student_id)
+        except ChatContent.DoesNotExist:
+            chat_content = ChatContent(teacher_id=teacher_id,student_id=student_id,content=json.dumps({}))
+            chat_content.save()
+        content = json.loads(chat_content.content)
+        return JsonResponse({"content":content,"id":chat_content.id},status=200)
+
+
+def wc_post_chat_content(request):
+    """
+    上传聊天内容
+    """
+    return HttpResponse("上传成功",status=200)

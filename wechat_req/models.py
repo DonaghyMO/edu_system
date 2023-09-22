@@ -7,7 +7,8 @@ USER_CHOICES = (
 )
 NOTIFICATION_STATUS_CHOICES = (
     (1,'撤回'),
-    (0,'已传达')
+    (0,'已传达'),
+    (2,'已读')
 )
 
 
@@ -24,3 +25,15 @@ class Notification(models.Model):
     # 消息状态
     status = models.IntegerField(choices=NOTIFICATION_STATUS_CHOICES,default=0)
     create_time = models.DateTimeField(auto_now=True)
+
+
+class ChatContent(models.Model):
+    class Meta:
+        db_table = "chat_content"
+    id = models.AutoField(primary_key=True)
+    teacher_id = models.IntegerField(null=False)
+    student_id = models.IntegerField(null=False)
+    # TODO:这里实现有误，可以改进聊天内容的存储方案
+    content = models.TextField(max_length=20000)
+    create_time = models.DateTimeField(auto_now=True)
+    new_flag = models.BooleanField(default=True)

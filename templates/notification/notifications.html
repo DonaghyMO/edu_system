@@ -55,6 +55,8 @@
               <span style="background-color:lightgreen;border-radius:5px">已传达</span>
               {% elif item.status == 1 %}
               <span style="background-color:red;border-radius:5px">已撤回</span>
+              {% elif item.status == 2 %}
+              <span style="background-color:grey;border-radius:5px">已读</span>
               {% endif %}
               <form action="withdraw" method="POST">
                      <input type="hidden" name='withdraw_id' value="{{ item.id }}">

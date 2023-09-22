@@ -49,11 +49,16 @@ urlpatterns = [
     path('wechat/notification/',wechat_view.get_notifications,name='get_notifications'),
     path('wechat/notification/publish',wechat_view.publish_notification,name='post_notification'),
     path('wechat/notification/withdraw',wechat_view.withdraw_notification,name='withdraw_notification'),
+    path('wechat/notification/delete',wechat_view.delete_notification,name='delete_notification'),
     path('wechat/notification/wx_notification',wechat_view.wc_get_notifications),
     path('wechat/login',wechat_view.wc_login,name='wc_login'),
     path('wechat/resource_list',wechat_view.wc_get_resource_list,name='wc_resource_list'),
+    path('wechat/wc_search_resource',wechat_view.wc_search_resource,name='wc_search_resource'),
     path('wechat/resource_detail',wechat_view.wc_resource_detail,name='wc_resource_detail'),
-    path('wechat/user_info',wechat_view.wc_get_user_info,name='wc_get_user_info')
+    path('wechat/user_info',wechat_view.wc_get_user_info,name='wc_get_user_info'),
+    path('wechat/get_teacher_list',wechat_view.wc_get_teachers,name='wc_get_teacher_list'),
+    path('wechat/get_chat_content',wechat_view.wc_get_chat_content,name="wc_get_chat_content")
+
 ]
 
 if settings.DEBUG:
