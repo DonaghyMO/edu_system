@@ -45,7 +45,6 @@ def publish_notification(request):
     """
     发布通知
     """
-    print(request.POST.keys())
     if request.method == 'POST':
         if 'content' not in request.POST.keys() or len(request.POST.keys()) < 2:
             return redirect('get_notifications')
@@ -53,8 +52,6 @@ def publish_notification(request):
         # TODO:这里应该有更好的实现
         teachers = []
         students = []
-        for item in request.POST.items():
-            print(item)
         for key, value in request.POST.items():
             if "teacher" in key:
                 teachers.append(int(value))
@@ -276,16 +273,25 @@ def wc_get_user_info(request):
     return JsonResponse({"user_name": user.username})
 
 
-def wc_get_teachers(request):
+def wc_get_chat_list(request):
     """
     获取教师列表
     """
-    teachers = Teacher.objects.all()
-    data = [{
-        "username": t.username,
-        "teacher_id": t.id,
-
-    } for t in teachers]
+    # 请求用户的类别，教师用户获取所有用户列表，学生用户只能获取教师列表
+    user_type = request.GET.get("user_type")
+    data = []
+    if user_type == "teacher":
+        students = Student.objects.all()
+        for stu in students:
+            data.append({"username":stu.username,'user_id':stu.id,"user_type":"student"})
+    else:
+        teachers = Teacher.objects.all()
+        for t in teachers:
+            data.append({
+                "username": t.username,
+                "user_id": t.id,
+                "user_type": "teacher"
+            })
     return JsonResponse(data, status=200, safe=False)
 
 

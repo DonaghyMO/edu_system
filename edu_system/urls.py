@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 from resource_manage import views as resource_view
 from wechat_req import views as wechat_view
 from chenlu import views as chenlu_view
+from chat import views as chat_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -57,9 +58,11 @@ urlpatterns = [
     path('wechat/resource_detail',wechat_view.wc_resource_detail,name='wc_resource_detail'),
     path('wechat/register',wechat_view.wc_register,name='wc_register'),
     path('wechat/user_info',wechat_view.wc_get_user_info,name='wc_get_user_info'),
-    path('wechat/get_teacher_list',wechat_view.wc_get_teachers,name='wc_get_teacher_list'),
-    path('wechat/get_chat_content',wechat_view.wc_get_chat_content,name="wc_get_chat_content")
-
+    path('wechat/get_chat_list',wechat_view.wc_get_chat_list,name='wc_get_teacher_list'),
+    path('wechat/get_chat_content',wechat_view.wc_get_chat_content,name="wc_get_chat_content"),
+    path('chat/', chat_view.index, name='index'),
+    path('chat/<str:room_name>/', chat_view.room, name='room'),
+    path('chat/get_chat_logs/<str:room_id>/', chat_view.get_chat_log,name='get_chat_logs')
 ]
 
 if settings.DEBUG:
