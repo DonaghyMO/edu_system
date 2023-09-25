@@ -49,7 +49,8 @@ INSTALLED_APPS = [
 
 # 设置ASGI应用
 ASGI_APPLICATION = 'edu_system.asgi.application'
-DJANGO_SETTINGS_MODULE = 'edu_system.settings'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'edu_system.settings')
+
 # 设置通道层的通信后台 - 本地测试用
 CHANNEL_LAYERS = {
      "default": {
