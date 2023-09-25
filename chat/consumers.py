@@ -40,7 +40,7 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': content
+                'data': text_data_json
             }
         )
         # 存储聊天记录
@@ -50,12 +50,9 @@ class ChatConsumer(WebsocketConsumer):
 
     # 从频道组接收到消息后执行方法
     def chat_message(self, event):
-        message = event['message']
-
+        message = event['data']
         # 通过websocket发送消息到客户端
-        self.send(text_data=json.dumps({
-            'message': f'{message}'
-        }))
+        self.send(text_data=json.dumps(message))
 
     async def send_history_messages(self, messages):
         for message in messages:
