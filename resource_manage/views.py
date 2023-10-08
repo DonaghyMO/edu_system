@@ -185,10 +185,10 @@ def download_resource(request, resource_type, resource_name):
     elif resource_type == 'text':  # 文本类型
         file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
     else:
-        file_path = os.path.join(BASE_DIR, 'static', 'redirect.js', )
+        file_path = os.path.join(BASE_DIR, 'static', 'card_pic.jpg', )
     file = open(file_path, 'rb')
     response = FileResponse(file)
     if resource_type == 4:
-        response['Content-Type'] = "text/js"
+        response['Content-Type'] = "image/jpeg"
     return response
 
