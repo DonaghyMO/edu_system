@@ -184,6 +184,8 @@ def download_resource(request, resource_type, resource_name):
         file_path = os.path.join(BASE_DIR, 'upload', 'audio', resource_name)
     elif resource_type == 'text':  # 文本类型
         file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
+    elif resource_type == 'language': # 页面语言json文件
+        file_path = os.path.join(BASE_DIR,'upload','language',resource_name)
     else:
         file_path = os.path.join(BASE_DIR, 'static', 'card_pic.jpg', )
     file = open(file_path, 'rb')

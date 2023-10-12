@@ -1,0 +1,60 @@
+{
+  "pre_login": {
+    "teacher_login": "교사 로그인",
+    "student_login": "학생 로그인"
+  },
+  "login": {
+    "welcome": "환영",
+    "username": "사용자 이름",
+    "login": "비밀번호",
+    "login_button": "로그인",
+    "no_account": "계정이 없습니다",
+    "register": "등록하다"
+  },
+  "register": {
+    "username": "사용자 이름",
+    "password": "비밀번호",
+    "confirm": "비밀번호 확인",
+    "invite_code": "교사 초대장 코드 (학생 사용자 무시)",
+    "register": "등록하다",
+    "exist_account": "기존 계정",
+    "login": "로그인"
+  },
+  "index": {
+    "audio": "오디오",
+    "notification": "통지하다",
+    "video": "동영상",
+    "text": "텍스트",
+    "interaction": "시오"
+  },
+  "search": {
+    "keyword": "키워드를 입력해주세요",
+    "search": "찾다",
+    "audio": "오디오",
+    "video": "동영상",
+    "text": "텍스트"
+  },
+  "me": {
+    "username": "사용자 이름",
+    "wechat_name": "Wechat 별명",
+    "notification": "통지하다",
+    "user_type": "사용자 카테고리",
+    "logout": "로그 아웃"
+  },
+  "chatroom": {
+    "input_message": "메시지를",
+    "send": "보내다"
+  },
+  "interaction": {
+    "teacher": "선생님",
+    "student": "학생"
+  },
+  "notification": {
+    "notification": "통지하다"
+  },
+  "resource": {
+    "audio": "오디오",
+    "video": "동영상",
+    "text": "텍스트"
+  }
+}

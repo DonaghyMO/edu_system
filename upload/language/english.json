@@ -1,0 +1,60 @@
+{
+  "pre_login": {
+    "teacher_login": "Teacher login",
+    "student_login": "Student login"
+  },
+  "login": {
+    "welcome": "Welcome",
+    "username": "username",
+    "login": "password",
+    "login_button": "Log in",
+    "no_account": "no account",
+    "register": "register"
+  },
+  "register": {
+    "username": "username",
+    "password": "password",
+    "confirm": "Confirm Password",
+    "invite_code": "Teacher invitation code (student user ignores)",
+    "register": "register",
+    "exist_account": "Existing account",
+    "login": "Log in"
+  },
+  "index": {
+    "audio": "Audio",
+    "video": "Video",
+    "text": "Text",
+    "notification": "Notify",
+    "interaction": "Interactive"
+  },
+  "search": {
+    "keyword": "Please enter a keyword",
+    "search": "search",
+    "audio": "Audio",
+    "video": "video",
+    "text": "text"
+  },
+  "me": {
+    "username": "username",
+    "wechat_name": "WeChat nickname",
+    "user_type": "User category",
+    "notification": "notify",
+    "logout": "Sign out"
+  },
+  "chatroom": {
+    "input_message": "Please enter the message",
+    "send": "send"
+  },
+  "interaction": {
+    "teacher": "teacher",
+    "student": "student"
+  },
+  "notification": {
+    "notification": "notify"
+  },
+  "resource": {
+    "audio": "Audio",
+    "video": "video",
+    "text": "text"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "pre_login": {
+    "teacher_login": "教师登录",
+    "student_login": "学生登录"
+  },
+  "login": {
+    "welcome": "欢迎你",
+    "username": "用户名",
+    "login": "密码",
+    "login_button": "登录",
+    "no_account": "没有帐号",
+    "register": "注册"
+  },
+  "register": {
+    "username": "用户名",
+    "password": "密码",
+    "confirm": "确认密码",
+    "invite_code": "教师邀请码（学生用户忽略）",
+    "register": "注册",
+    "exist_account": "已有帐号",
+    "login": "登录"
+  },
+  "index": {
+    "audio": "音频",
+    "video": "视频",
+    "text": "文本",
+    "interaction": "互动",
+    "notification": "通知"
+  },
+  "search": {
+    "keyword": "请输入关键词",
+    "search": "搜索",
+    "audio": "音频",
+    "video": "视频",
+    "text": "文本"
+  },
+  "me": {
+    "username": "用户名",
+    "wechat_name": "微信昵称",
+    "user_type": "用户类别",
+    "notification": "通知",
+    "logout": "登出"
+  },
+  "chatroom": {
+    "input_message": "请输入消息",
+    "send": "发送"
+  },
+  "interaction": {
+    "teacher": "教师",
+    "student": "学生"
+  },
+  "notification": {
+    "notification": "通知"
+  },
+  "resource": {
+    "audio": "音频",
+    "video": "视频",
+    "text": "文本"
+  }
+}

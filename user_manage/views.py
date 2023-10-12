@@ -16,6 +16,9 @@ def login(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         password = request.POST.get('password')
+        user = Teacher.objects.get(username=name)
+        if user.is_admin == 0:
+            return HttpResponse("不是管理员")
         # 校验错误，返回登录页面
         if not check_password(name, password):
             template = loader.get_template("user_manage/login.html")
