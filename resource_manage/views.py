@@ -1,4 +1,4 @@
-import os
+import os,base64
 from django.shortcuts import render, redirect
 from resource_manage.forms import VideoUploadForm, AudioUploadForm, TextUploadForm, TextUpdateForm
 from resource_manage.models import Video, Audio, Text
@@ -18,6 +18,12 @@ def upload_video(request):
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
+            form_instance = form.save(commit=False)
+            # 转码
+            uploaded_file= form_instance.video_file
+            video_name = form_instance.video_file.name
+            video_name = str(base64.b64encode(video_name.encode("utf-8")))+".mp4"
+            uploaded_file.name = video_name
             form.save()
             return redirect('video_list')  # Redirect to a page showing the list of uploaded videos
     else:
