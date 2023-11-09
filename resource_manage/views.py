@@ -22,7 +22,7 @@ def upload_video(request):
             # 转码
             uploaded_file= form_instance.video_file
             video_name = form_instance.video_file.name
-            video_name = str(base64.b64encode(video_name.encode("utf-8")))+".mp4"
+            video_name = str(base64.b64encode(video_name.encode("utf-8"))) + ".mp4"
             uploaded_file.name = video_name
             form.save()
             return redirect('video_list')  # Redirect to a page showing the list of uploaded videos
@@ -115,8 +115,14 @@ def list_texts(request):
         else:
             texts = Text.objects.all()
         for text in texts:
-            with open(text.text_file.path) as f:
-                content = f.read()
+            text_type = os.path.splitext(text.text_file.path)[1]
+            if text_type in [".doc",".docx"]:
+                from tools import doc_reader
+                content = doc_reader.transfer_doc2string(text.text_file.path)
+
+            else:
+                with open(text.text_file.path) as f:
+                    content = f.read()
             form = TextUploadForm(instance=text)
             tmp = {
                 "title": text.title,
@@ -125,7 +131,6 @@ def list_texts(request):
                 "description": text.description,
                 "form": form,
             }
-
             text_list.append(tmp)
     elif request.method == 'POST':
         text_id = request.POST.get("text_id")
@@ -190,8 +195,8 @@ def download_resource(request, resource_type, resource_name):
         file_path = os.path.join(BASE_DIR, 'upload', 'audio', resource_name)
     elif resource_type == 'text':  # 文本类型
         file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
-    elif resource_type == 'language': # 页面语言json文件
-        file_path = os.path.join(BASE_DIR,'upload','language',resource_name)
+    elif resource_type == 'language':  # 页面语言json文件
+        file_path = os.path.join(BASE_DIR, 'upload', 'language', resource_name)
     else:
         file_path = os.path.join(BASE_DIR, 'static', 'card_pic.jpg', )
     file = open(file_path, 'rb')

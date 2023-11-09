@@ -1,4 +1,5 @@
 import json
+from tools import doc_reader
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from .models import Notification, ChatContent
@@ -245,8 +246,15 @@ def wc_resource_detail(request):
         resource = Text.objects.get(id=resource_id)
         resource_name = str(resource.text_file).split('text/')[1]
         file_path = os.path.join(BASE_DIR, 'upload', 'text', resource_name)
-        with open(file_path, 'r') as f:
-            data = f.read()
+
+        # # 判断文件类型
+        text_type = os.path.splitext(file_path)[1]
+        if text_type in [".doc", ".docx"]:
+            data = doc_reader.transfer_doc2string(file_path)
+            print(data)
+        else:
+            with open(file_path, 'r') as f:
+                data = f.read()
         return JsonResponse({
             "content": data,
             "description": resource.description,

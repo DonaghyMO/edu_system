@@ -99,8 +99,11 @@ APPEND_SLASH = False
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 MYSQL_FILE = os.path.join(BASE_DIR, 'mysql.json')
-with open(MYSQL_FILE, 'r', encoding="utf-8") as f:
-    tmp = json.load(f)
+try:
+    with open(MYSQL_FILE, 'r', encoding="utf-8") as f:
+        tmp = json.load(f)
+except Exception as e:
+    tmp = {"USER":"root","PASSWORD":"1998"}
 USER = tmp.get('USER') if tmp.get('USER') else 'mo'
 PASSWORD = tmp.get('PASSWORD') if tmp.get('PASSWORD') else '1998'
 
