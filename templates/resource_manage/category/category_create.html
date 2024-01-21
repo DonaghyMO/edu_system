@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+{% block content%}
+<h2>创建一个类别</h2>
+<form method="post" action="{% url 'create_category' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label for="parent_category">选择父类别（不选默认为最高类别）：</label>
+    <div id="select_list">
+        <select name="parent_category" id="parent_category" class="custom-select">
+            <option value="" selected>-- Select an option --</option>
+            {% for value, label in cats %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+<br>
+    <button type="submit">Submit</button>
+</form>
+    <script>
+        const parent_category ={{ parent_category|safe }};
+        const doc = document.getElementById("parent_category");
+        if(parent_category){
+            doc.value=parent_category;
+        }
+
+    </script>
+{% endblock %}

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'chenlu',
     'wechat_req',
     'chat',
-    "channels"
+    "channels",
+    "category"
 ]
 
 # 设置ASGI应用

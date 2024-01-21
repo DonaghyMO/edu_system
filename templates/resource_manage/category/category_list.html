@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% block content%}
+    <a href="create">创建类别</a>
+    <form action="/category/list" method="get">
+    <b>按类别名检索:</b><input type="text" name="category_search">
+    <input type="submit" value="检索" />
+    </form>
+<div id="tree-container"></div>
+
+<script>
+    // 后端返回的树状结构数据
+    const treeData = {{ categories|safe }};
+
+    // 递归构建树状结构的HTML
+    function buildTreeHtml(node) {
+        if (!node.hasOwnProperty("name")){
+            return ""
+        }
+        let html = `<a href="create?parent_category=${node.name}"><li>${node.category_name}`;
+        if (node.hasOwnProperty('children')){
+            if (node.children.length > 0) {
+            html += '<ul>';
+            node.children.forEach(child => {
+                html += buildTreeHtml(child);
+            });
+            html += '</ul>';
+            }
+        }
+
+        html += '</li></a>';
+        return html;
+    }
+
+    // 获取树状结构HTML
+    const treeHtml = buildTreeHtml(treeData);
+
+    // 将树状结构HTML插入到页面中
+    document.getElementById('tree-container').innerHTML = `<ul>${treeHtml}</ul>`;
+</script>
+{% endblock %}
