@@ -13,16 +13,51 @@
             {% endfor %}
         </select>
     </div>
-
 <br>
-    <button type="submit">Submit</button>
+    <button type="submit">创建</button>
 </form>
+<button id="deleteButton">删除“{{ parent_name }}”类别</button>
+<button id="updateButton" onclick="window.location.href='/category/update?parent_category={{ parent_category }}'">修改“{{ parent_name }}”类别</button>
     <script>
         const parent_category ={{ parent_category|safe }};
         const doc = document.getElementById("parent_category");
         if(parent_category){
             doc.value=parent_category;
         }
+
+        // 删除类别
+        document.addEventListener('DOMContentLoaded', function () {
+        // 获取删除按钮
+        var deleteButton = document.getElementById('deleteButton');
+
+        // 添加点击事件监听器
+        deleteButton.addEventListener('click', function () {
+            // 发送 AJAX 请求到后端删除数据
+            var objectID = {{ parent_category }};
+            fetch('/category/delete/' + objectID + '/', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // 处理删除成功的情况
+                if(data.success){
+                    alert(data.success)
+                }
+                else{
+                    alert(data.error)
+                }
+                // 在成功后，跳转到其他页面
+                window.location.href = '/category/list';
+            })
+            .catch(error => console.error('Error:', error));
+        })
+        })
+
 
     </script>
 {% endblock %}

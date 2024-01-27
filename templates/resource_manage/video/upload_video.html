@@ -14,7 +14,14 @@
         <label for="{{ form.description.id_for_label }}">描述:</label>
         {{ form.description}}
         <br>
-
+        <div id="select_list">
+            <select name="parent_category" id="parent_category" class="custom-select">
+                <option value="" selected>-- Select an option --</option>
+                {% for value, label in cats %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <button type="submit">上传</button>
     </form>
 {% endblock %}

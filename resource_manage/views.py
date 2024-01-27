@@ -1,4 +1,4 @@
-import os,base64
+import os, base64
 from django.shortcuts import render, redirect
 from resource_manage.forms import VideoUploadForm, AudioUploadForm, TextUploadForm, TextUpdateForm
 from resource_manage.models import Video, Audio, Text
@@ -20,10 +20,11 @@ def upload_video(request):
         if form.is_valid():
             form_instance = form.save(commit=False)
             # 转码
-            uploaded_file= form_instance.video_file
+            uploaded_file = form_instance.video_file
             video_name = form_instance.video_file.name
             video_name = str(base64.b64encode(video_name.encode("utf-8"))) + ".mp4"
             uploaded_file.name = video_name
+            print(form.cleaned_data["cat_id"])
             form.save()
             return redirect('video_list')  # Redirect to a page showing the list of uploaded videos
     else:
@@ -116,7 +117,7 @@ def list_texts(request):
             texts = Text.objects.all()
         for text in texts:
             text_type = os.path.splitext(text.text_file.path)[1]
-            if text_type in [".doc",".docx"]:
+            if text_type in [".doc", ".docx"]:
                 from tools import doc_reader
                 content = doc_reader.transfer_doc2string(text.text_file.path)
 
@@ -186,6 +187,30 @@ def delete_text(request, text_id):
         return JsonResponse({'error': '无效的请求方法'}, status=400)
 
 
+def list_videos_with_category_id(category_id):
+    """
+    获取指定类别下的视频资源
+    """
+    videos = Video.objects.filter(category_id=category_id)
+    return videos
+
+
+def list_audios_with_category_id(category_id):
+    """
+    获取指定类别下的音频资源
+    """
+    audios = Audio.objects.filter(category_id=category_id)
+    return audios
+
+
+def list_text_with_category_id(category_id):
+    """
+    获取指定类别下的文本资源
+    """
+    texts = Text.objects.filter(category_id=category_id)
+    return texts
+
+
 # @ check_login
 def download_resource(request, resource_type, resource_name):
     from edu_system.settings import BASE_DIR
@@ -204,4 +229,3 @@ def download_resource(request, resource_type, resource_name):
     if resource_type == 4:
         response['Content-Type'] = "image/jpeg"
     return response
-

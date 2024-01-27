@@ -51,6 +51,9 @@ urlpatterns = [
     # 类别管理
     path('category/list', category_view.list_categories, name="list_category"),
     path('category/create', category_view.create_category, name='create_category'),
+    path('category/delete/<slug:object_id>/', category_view.delete_category, name='delete_category'),
+    path('category/update', category_view.update_category, name='update_category'),
+
     # 微信相关
     path('wechat/notification/', wechat_view.get_notifications, name='get_notifications'),
     path('wechat/notification/publish', wechat_view.publish_notification, name='post_notification'),

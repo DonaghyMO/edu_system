@@ -251,7 +251,6 @@ def wc_resource_detail(request):
         text_type = os.path.splitext(file_path)[1]
         if text_type in [".doc", ".docx"]:
             data = doc_reader.transfer_doc2string(file_path)
-            print(data)
         else:
             with open(file_path, 'r') as f:
                 data = f.read()

@@ -16,7 +16,7 @@ class Video(models.Model):
     description = models.CharField(max_length=300,null=True)
     # 类别字段
     category = models.CharField(blank=True,max_length=50)
-
+    category_id = models.IntegerField(blank=False,default=-1)
 
 class Audio(models.Model):
     id = models.AutoField(primary_key=True)
@@ -32,7 +32,7 @@ class Audio(models.Model):
     description = models.CharField(max_length=300,null=True)
     # 类别字段
     category = models.CharField(blank=True,max_length=50)
-
+    category_id = models.IntegerField(blank=False,default=-1)
     def __str__(self):
         return self.title
 
@@ -50,3 +50,4 @@ class Text(models.Model):
     description = models.CharField(max_length=300,null=True)
     # 类别字段
     category = models.CharField(blank=True,max_length=50)
+    category_id = models.IntegerField(blank=False,default=-1)

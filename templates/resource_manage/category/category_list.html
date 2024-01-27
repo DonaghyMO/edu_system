@@ -1,10 +1,6 @@
 {% extends 'base/base.html' %}
 {% block content%}
-    <a href="create">创建类别</a>
-    <form action="/category/list" method="get">
-    <b>按类别名检索:</b><input type="text" name="category_search">
-    <input type="submit" value="检索" />
-    </form>
+    <p>提示：点击对应类别进行创建、删除、修改</p>
 <div id="tree-container"></div>
 
 <script>
@@ -16,7 +12,7 @@
         if (!node.hasOwnProperty("name")){
             return ""
         }
-        let html = `<a href="create?parent_category=${node.name}"><li>${node.category_name}`;
+        let html = `<a href="create?parent_category=${node.name}&&parent_name=${node.category_name}"><li>${node.category_name}`;
         if (node.hasOwnProperty('children')){
             if (node.children.length > 0) {
             html += '<ul>';

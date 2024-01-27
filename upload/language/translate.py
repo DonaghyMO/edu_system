@@ -10,7 +10,6 @@ def trans():
     dest = "ko"
     with open("chinese.json","r") as f:
         data = json.loads(f.read())
-        print(data)
         for key,value in data.items():
             t={}
             for k,v in value.items():
