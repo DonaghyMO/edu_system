@@ -18,6 +18,11 @@
 </form>
 <button id="deleteButton">删除“{{ parent_name }}”类别</button>
 <button id="updateButton" onclick="window.location.href='/category/update?parent_category={{ parent_category }}'">修改“{{ parent_name }}”类别</button>
+    <br><br><br>
+    <button id="multipleUploadText" onclick="window.location.href='/resource/multiple_upload?resource_type=text&&category_id={{ parent_category }}'">批量上传教案</button>
+    <button id="multipleUploadAudio" onclick="window.location.href='/resource/multiple_upload?resource_type=audio&&category_id={{ parent_category }}'">批量上传音频</button>
+    <button id="multipleUploadVideo" onclick="window.location.href='/resource/multiple_upload?resource_type=video&&category_id={{ parent_category }}'">批量上传视频</button>
+
     <script>
         const parent_category ={{ parent_category|safe }};
         const doc = document.getElementById("parent_category");

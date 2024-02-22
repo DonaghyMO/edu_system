@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <h2>上传音频</h2>
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+        <div id="fileInputsContainer">
+            <!-- 文件输入将在这里动态添加 -->
+        </div>
+        <button type="button" onclick="addFileInput()">添加文件</button>
+        <br>
+        <label for="{{ form.degree.id_for_label }}">选择难度:</label>
+        {{ form.degree }}
+        <br>
+        <label for="{{ form.description.id_for_label }}">描述:</label>
+        {{ form.description }}
+        <br>
+        <label>类别:{{ cat.name }}</label>
+        <br>
+        <button type="submit">上传</button>
+    </form>
+
+    <script>
+        function addFileInput() {
+            var fileInputsContainer = document.getElementById('fileInputsContainer');
+            var newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.name = 'audio_files';  // 注意：这里使用一个数组名，以便后端处理多个文件
+            newInput.multiple = true;
+            newInput.accept = '.mp3';
+            fileInputsContainer.appendChild(newInput);
+        }
+
+        // 在表单提交时动态添加字段
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            var categoryIdInput = document.createElement('input');
+            categoryIdInput.type = 'hidden';
+            categoryIdInput.name = 'category_id';
+            categoryIdInput.value = '{{ cat.id }}';
+            this.appendChild(categoryIdInput);
+            var resourceTypeInput = document.createElement('input');
+            resourceTypeInput.type = 'hidden';
+            resourceTypeInput.name = 'resource_type';
+            resourceTypeInput.value = 'audio';
+            this.appendChild(resourceTypeInput);
+        });
+    </script>
+{% endblock %}

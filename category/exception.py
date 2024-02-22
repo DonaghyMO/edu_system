@@ -40,3 +40,11 @@ class CategoryWithResource(Exception):
     """
     def __init__(self):
         super().__init__("类别下有资源，无法删除")
+
+
+class NotValidCategory(Exception):
+    """
+    无效类别
+    """
+    def __init__(self):
+        super().__init__("无效类别，请选择类别")

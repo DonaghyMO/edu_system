@@ -1,22 +1,44 @@
 {% extends 'base/base.html' %}
-{% block content%}
+{% block content %}
     <h2>上传教案</h2>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
         <label for="{{ form.title.id_for_label }}">文件名</label>
         {{ form.title }}
         <br>
-        <label for="{{ form.text_file.id_for_label }}">选择教案文件:</label>
+        <label for="{{ form.text_file.id_for_label }}">选择教案文件 (docx, txt):</label>
         {{ form.text_file}}
         <br>
         <label for="{{ form.degree.id_for_label }}">选择难度:</label>
         {{ form.degree}}
         <br>
-        <label for="{{ form.category.id_for_label }}">类别:</label>
-        {{ form.category}}
-        <br>
         <label for="{{ form.description.id_for_label }}">描述:</label>
         {{ form.description}}
         <br>
+        <div id="select_list">
+        <label>选择类别：</label>
+            <select name="category_id" id="category_id" class="custom-select">
+                <option value="" selected>-- Select an option --</option>
+                {% for value, label in cats %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <button type="submit">上传</button>
     </form>
+
+    <script>
+        function validateForm() {
+            var fileInput = document.getElementById('id_text_file');
+            var allowedExtensions = /(\.docx|\.txt)$/i;
+
+            if (!allowedExtensions.exec(fileInput.value)) {
+                alert('只允许上传docx和txt类型的文件。');
+                return false;
+            }
+
+            return true;
+
+        }
+    </script>
 {% endblock %}

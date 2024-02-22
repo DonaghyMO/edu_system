@@ -10,7 +10,7 @@ from backend.redis_relevent import get_redis_client
 from category.forms import CategoryCreateForm
 from category.models import Category
 from my_decorater import check_login
-from resource_manage.views import list_videos_with_category_id, list_text_with_category_id, list_audios_with_category_id
+from tools.utils import list_videos_with_category_id, list_text_with_category_id, list_audios_with_category_id
 from .exception import CategoryExist, RootCategoryDeleteFailed, CategoryWithResource
 
 
@@ -276,6 +276,26 @@ def update_redis_tree(category_id, category_name):
     redis_client.set(tree_key, json_data, ex=60 * 60 * 24 * 365)
 
 
+def update_resource_category(category_id, category_name):
+    """
+    修改音频、视频、文本资源的类别名
+    """
+    texts = list_text_with_category_id(category_id)
+    for text in texts:
+        text.category = category_name
+        text.save()
+
+    audios = list_audios_with_category_id(category_id)
+    for audio in audios:
+        audio.category = category_name
+        audio.save()
+
+    videos = list_videos_with_category_id(category_id)
+    for video in videos:
+        video.category = category_name
+        video.save()
+
+
 @check_login
 def update_category(request):
     """
@@ -295,6 +315,7 @@ def update_category(request):
             cat.name = form.cleaned_data["name"]
             cat.description = form.cleaned_data["description"]
             cat.save()
+            update_resource_category(cat.id, cat.name)
         return redirect("list_category")
 
 

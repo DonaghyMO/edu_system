@@ -30,6 +30,9 @@ urlpatterns = [
     path('user_manage/teacher_register/', user_views.teacher_register, name='teacher_register'),
     path('user_manage/teacher_update/<int:teacher_id>', user_views.teacher_update, name='teacher_update'),
     path('user_manage/teacher_delete/<int:teacher_id>/', user_views.teacher_delete, name='teacher_delete'),
+    # 批量处理
+    path('resource/multiple_upload', resource_view.multiple_upload, name='multiple_upload'),
+
     # 视频管理
     path('video/upload/', resource_view.upload_video, name='upload_video'),
     path('videos/', resource_view.list_videos, name='video_list'),

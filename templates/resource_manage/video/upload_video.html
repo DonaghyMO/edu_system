@@ -5,9 +5,6 @@
         <label for="{{ form.title.id_for_label }}">文件名</label>
         {{ form.title }}
         <br>
-        <label for="{{ form.category.id_for_label }}">类别（用于检索）:</label>
-        {{ form.category}}
-        <br>
         <label for="{{ form.video_file.id_for_label }}">选择视频文件:</label>
         {{ form.video_file}}
         <br>
@@ -15,7 +12,8 @@
         {{ form.description}}
         <br>
         <div id="select_list">
-            <select name="parent_category" id="parent_category" class="custom-select">
+        <label>选择类别：</label>
+            <select name="category_id" id="category_id" class="custom-select">
                 <option value="" selected>-- Select an option --</option>
                 {% for value, label in cats %}
                     <option value="{{ value }}">{{ label }}</option>

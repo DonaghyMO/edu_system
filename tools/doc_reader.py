@@ -1,4 +1,6 @@
-import os,docx
+import docx
+
+
 def transfer_doc2string(file_location):
     """
     将doc转换成string

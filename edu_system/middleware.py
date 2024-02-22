@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from category.exception import CategoryDeleteFailed,RootCategoryDeleteFailed,CategoryWithResource
+from category.exception import *
+from resource_manage.excptions import *
 from django.core.exceptions import ObjectDoesNotExist
 import traceback
+
 
 class GlobalExceptionHandlerMiddleware:
     def __init__(self, get_response):
@@ -14,7 +16,9 @@ class GlobalExceptionHandlerMiddleware:
 
     def process_exception(self, request, exception):
         traceback.print_exc()
-        if isinstance(exception, RootCategoryDeleteFailed) or isinstance(exception, CategoryDeleteFailed) or isinstance(exception,ObjectDoesNotExist) or isinstance(exception,CategoryWithResource):
+        if (isinstance(exception, RootCategoryDeleteFailed)
+                or isinstance(exception, CategoryDeleteFailed) or isinstance(exception, ObjectDoesNotExist)
+                or isinstance(exception, CategoryWithResource)):
             return JsonResponse({'error': str(exception)}, status=500)
         # 处理异常逻辑
         error_message = str(exception)
