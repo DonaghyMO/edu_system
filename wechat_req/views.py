@@ -4,10 +4,12 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from .models import Notification, ChatContent
 from my_decorater import check_login
+from anytree.exporter import JsonExporter
 from resource_manage.models import Audio, Text, Video
 from user_manage.models import Teacher, Student
-from django.db.models import Q
 import requests
+from anytree import find, PreOrderIter, Node
+from backend.dir_tree import get_category_tree_dic, get_category_tree
 from .utils import check_invite_code
 from edu_system.settings import BASE_DIR
 import os
@@ -118,7 +120,8 @@ def wc_login(request):
     except ObjectDoesNotExist:
         return JsonResponse({"message": "用户不存在", "status": "fail"}, status=200)
     # 这里需要自行实现用户登录逻辑，例如使用 Token 或 Session 等方式
-    rejson = {"message":"登录成功","status": "success", "user_id": user.id, "user_type": user_type, "openid": user.openid}
+    rejson = {"message": "登录成功", "status": "success", "user_id": user.id, "user_type": user_type,
+              "openid": user.openid}
     return JsonResponse(rejson, status=200)
 
 
@@ -196,6 +199,34 @@ def wc_get_notifications(request):
     return JsonResponse(notifications, safe=False)
 
 
+new_root = None
+
+
+def gen_wx_dir_tree(resource_list,resource_type):
+    """
+    创建微信小程序用的目录树
+    """
+    root = get_category_tree()
+    preorder_reconstruct(root, resource_list,resource_type)
+    exporter = JsonExporter(indent=2, sort_keys=True)
+    exporter.export(new_root)
+    return exporter.export(new_root)
+
+
+def preorder_reconstruct(node, resource_list, resource_type,parent=None):
+    global new_root
+    resources = []
+    for res in resource_list:
+        if node.name == res["category_id"]:
+            res["resource_type"] = resource_type
+            resources.append(res)
+    new_node = Node(name=node.name, category_name=node.category_name, resources=resources, resource_type=resource_type,parent=parent)
+    if new_root is None:
+        new_root = new_node
+    for child in node.children:
+        preorder_reconstruct(child, resource_list, resource_type,new_node)
+
+
 def wc_get_resource_list(request):
     """
     资源列表页
@@ -204,12 +235,18 @@ def wc_get_resource_list(request):
     # 根据资源类型获取资源名列表
     resource_list = []
     if resource_type == "video":
-        resource_list = [{"title": item.title, "resource_id": item.id} for item in Video.objects.all()]
+        resource_list = [{"title": item.title, "resource_id": item.id, "category_id": item.category_id} for item in
+                         Video.objects.all()]
     if resource_type == "audio":
-        resource_list = [{"title": item.title, "resource_id": item.id} for item in Audio.objects.all()]
+        resource_list = [{"title": item.title, "resource_id": item.id, "category_id": item.category_id} for item in
+                         Audio.objects.all()]
     if resource_type == "text":
-        resource_list = [{"title": item.title, "resource_id": item.id} for item in Text.objects.all()]
-    return JsonResponse({"resource_list": resource_list}, status=200)
+        resource_list = [{"title": item.title, "resource_id": item.id, "category_id": item.category_id} for item in
+                         Text.objects.all()]
+    resource_tree = gen_wx_dir_tree(resource_list,resource_type)
+    global new_root
+    new_root = None
+    return JsonResponse({"resource_list": resource_list, "resource_tree": resource_tree}, status=200)
 
 
 def wc_search_resource(request):
@@ -290,7 +327,7 @@ def wc_get_chat_list(request):
     if user_type == "teacher":
         students = Student.objects.all()
         for stu in students:
-            data.append({"username":stu.username,'user_id':stu.id,"user_type":"student"})
+            data.append({"username": stu.username, 'user_id': stu.id, "user_type": "student"})
     else:
         teachers = Teacher.objects.all()
         for t in teachers:

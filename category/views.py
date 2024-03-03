@@ -5,13 +5,14 @@ from anytree.importer import JsonImporter
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-
+from backend.dir_tree import get_category_tree
 from backend.redis_relevent import get_redis_client
 from category.forms import CategoryCreateForm
 from category.models import Category
 from my_decorater import check_login
 from tools.utils import list_videos_with_category_id, list_text_with_category_id, list_audios_with_category_id
 from .exception import CategoryExist, RootCategoryDeleteFailed, CategoryWithResource
+from backend.dir_tree import create_tree, get_category_node
 
 
 # Create your views here.
@@ -24,57 +25,6 @@ def list_categories(request):
         exporter = JsonExporter(indent=2, sort_keys=True)
         root = exporter.export(root)
     return render(request, 'resource_manage/category/category_list.html', {'categories': root})
-
-
-def create_tree():
-    """
-    创建类别树
-    """
-    try:
-        # mysql
-        ca = Category(id=-1, name="root", description="根节点")
-        ca.save()
-        # rides
-        redis_client = get_redis_client()
-        tree_key = "category_tree"
-        root = Node(-1, category_name="root")
-        exporter = JsonExporter(indent=2, sort_keys=True)
-        json_data = exporter.export(root)
-        redis_client.set(tree_key, json_data, ex=60 * 60 * 24 * 365)
-    except redis.RedisError as e:
-        return False
-    return True
-
-
-def get_category_tree():
-    """
-    获取类别树根节点,返回字典
-    """
-    redis_client = get_redis_client()
-    tree_key = "category_tree"
-    importer = JsonImporter()
-    try:
-        if not redis_client.exists(tree_key):
-            create_tree()
-        root = importer.import_(redis_client.get(tree_key))
-    except redis.RedisError as e:
-        # 先创建根节点
-        create_tree()
-        root = importer.import_(redis_client.get(tree_key))
-    return root
-
-
-def get_category_node(category_id):
-    """
-    根据类别id获取子树节点
-    """
-    root = get_category_tree()
-    node_to_find = find(root, lambda node: node.name == category_id)
-    # if not node_to_find:
-    #     node_to_find = find(root,lambda node: node.name==str(category_id))
-    # exporter = JsonExporter(indent=2,sort_keys=True)
-    # json_data = exporter.export(node_to_find)
-    return node_to_find
 
 
 def insert_category_tree(parent, child, child_name):
@@ -305,7 +255,8 @@ def update_category(request):
         category_id = request.GET.get("parent_category")
         cat = Category.objects.get(id=int(category_id))
         form = CategoryCreateForm(instance=cat)
-        return render(request, 'resource_manage/category/category_update.html', {"form": form,"category_id":category_id})
+        return render(request, 'resource_manage/category/category_update.html',
+                      {"form": form, "category_id": category_id})
     if request.method == "POST":
         form = CategoryCreateForm(request.POST)
         if form.is_valid():
