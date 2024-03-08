@@ -71,6 +71,7 @@ urlpatterns = [
     path('wechat/user_info', wechat_view.wc_get_user_info, name='wc_get_user_info'),
     path('wechat/get_chat_list', wechat_view.wc_get_chat_list, name='wc_get_teacher_list'),
     path('wechat/get_chat_content', wechat_view.wc_get_chat_content, name="wc_get_chat_content"),
+    path('wechat/get_category',wechat_view.wc_get_category,name="wc_get_category"),
     path('chat/', chat_view.index, name='index'),
     path('chat/<str:room_name>/', chat_view.room, name='room'),
     path('chat/get_chat_logs/<str:room_id>/', chat_view.get_chat_log, name='get_chat_logs')

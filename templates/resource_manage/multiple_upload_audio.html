@@ -3,9 +3,9 @@
     <h2>上传音频</h2>
     <form method="post" enctype="multipart/form-data" id="uploadForm">
         <div id="fileInputsContainer">
-            <!-- 文件输入将在这里动态添加 -->
+            <!-- 直接显示一个可以选择多个音频文件的输入框 -->
+            <input type="file" name="audio_files" multiple="multiple" accept=".mp3">
         </div>
-        <button type="button" onclick="addFileInput()">添加文件</button>
         <br>
         <label for="{{ form.degree.id_for_label }}">选择难度:</label>
         {{ form.degree }}
@@ -19,16 +19,6 @@
     </form>
 
     <script>
-        function addFileInput() {
-            var fileInputsContainer = document.getElementById('fileInputsContainer');
-            var newInput = document.createElement('input');
-            newInput.type = 'file';
-            newInput.name = 'audio_files';  // 注意：这里使用一个数组名，以便后端处理多个文件
-            newInput.multiple = true;
-            newInput.accept = '.mp3';
-            fileInputsContainer.appendChild(newInput);
-        }
-
         // 在表单提交时动态添加字段
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             var categoryIdInput = document.createElement('input');

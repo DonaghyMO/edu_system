@@ -7,9 +7,10 @@ from my_decorater import check_login
 from anytree.exporter import JsonExporter
 from resource_manage.models import Audio, Text, Video
 from user_manage.models import Teacher, Student
+from category.models import Category
 import requests
-from anytree import find, PreOrderIter, Node
-from backend.dir_tree import get_category_tree_dic, get_category_tree
+from anytree import find, PreOrderIter, Node,RenderTree
+from backend.dir_tree import get_category_tree_dic, get_category_tree,get_category_node
 from .utils import check_invite_code
 from edu_system.settings import BASE_DIR
 import os
@@ -248,6 +249,24 @@ def wc_get_resource_list(request):
     new_root = None
     return JsonResponse({"resource_list": resource_list, "resource_tree": resource_tree}, status=200)
 
+def has_resource(node):
+    """
+    判断有没有资源
+    """
+    child_resource_flag = False
+    if node.children:
+        for child in node.children:
+            # 子树中有资源就不删
+            if has_resource(child):
+                return True
+            else:
+                pass
+    cat_id = int(node.name)
+
+    if Video.objects.filter(category_id=cat_id) or Audio.objects.filter(category_id=cat_id) or Text.objects.filter(category_id=cat_id):
+        return True
+    return False
+
 
 def wc_search_resource(request):
     """
@@ -264,7 +283,13 @@ def wc_search_resource(request):
         resource_list.append({"type": "text", "title": item.title, "resource_id": item.id})
     for item in Video.objects.filter(title__icontains=keyword):
         resource_list.append({"type": "video", "title": item.title, "resource_id": item.id})
-    return JsonResponse({"resource_list": resource_list}, status=200)
+    categories = [{"id": item.id,"category_name": item.name} for item in Category.objects.filter(name__contains=keyword)]
+    new_cats = []
+    for cate in categories:
+        cate_node = get_category_node(cate["id"])
+        if has_resource(cate_node):
+            new_cats.append(cate)
+    return JsonResponse({"resource_list": resource_list,"category_list":new_cats}, status=200)
 
 
 def wc_resource_detail(request):
@@ -354,6 +379,65 @@ def wc_get_chat_content(request):
             chat_content.save()
         content = json.loads(chat_content.content)
         return JsonResponse({"content": content, "id": chat_content.id}, status=200)
+
+
+def delete_empty_tree(node, resource_type):
+    """
+    将目录树中没有资源的摘掉
+    """
+    child_resource_flag = False
+    if node.children:
+        for child in node.children:
+            # 子树中有资源就不删
+            if delete_empty_tree(child, resource_type):
+                child_resource_flag = True
+            else:
+                child.parent = None
+    cat_id = int(node.name)
+    if resource_type == "video":
+        resource_ob = Video
+    elif resource_type == "audio":
+        resource_ob = Audio
+    else:
+        resource_ob = Text
+
+    resources = resource_ob.objects.filter(category_id=cat_id)
+    if not resources and not child_resource_flag:
+        node.parent = None
+        return False
+    return True
+def wc_get_category(request):
+    """
+    获取目录
+    """
+    if request.method == "GET":
+        resource_type = request.GET.get("resource_type")
+        category_id = request.GET.get("category_id")
+        if not category_id:
+            category_id=-1
+        else:
+            category_id = int(category_id)
+        resources = "video"
+        if resource_type == "video":
+            resources = [{"id":item.id,"name":item.title} for item in Video.objects.filter(category_id=category_id)]
+        elif resource_type == "audio":
+            resources = [{"id":item.id,"name":item.title} for item in Audio.objects.filter(category_id=category_id)]
+        elif resource_type == "text":
+            resources = [{"id":item.id,"name":item.title} for item in Text.objects.filter(category_id=category_id)]
+
+        # 获取当前目录在树中节点
+        root = get_category_node(category_id)
+        # 只保留有资源的子树
+        delete_empty_tree(root, resource_type)
+        full_nodes = []
+        for pre, fill, node in RenderTree(root):
+            full_nodes.append(int(node.name))
+
+        child_category = [int(i) for i in Category.objects.get(id=category_id).child_category.split(",")]
+        children = Category.objects.filter(id__in=child_category)
+        child_category = [{"id":i.id,"category_name":i.name} for i in children if i.id in full_nodes]
+
+        return JsonResponse({"resources":resources,"child_category":child_category})
 
 
 def wc_post_chat_content(request):
