@@ -433,11 +433,7 @@ def wc_get_category(request):
         for pre, fill, node in RenderTree(root):
             full_nodes.append(int(node.name))
         cats = Category.objects.get(id=category_id)
-
-        print(cats.child_category)
-        print(cats.child_category.split(","))
-        print(len(cats.child_category.split(",")))
-        child_category = [int(i) for i in cats.child_category.split(",")]
+        child_category = [int(i) for i in cats.child_category.split(",") if i!='']
         children = Category.objects.filter(id__in=child_category)
         child_category = [{"id":i.id,"category_name":i.name} for i in children if i.id in full_nodes]
 
