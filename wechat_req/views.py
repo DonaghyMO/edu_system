@@ -413,8 +413,8 @@ def wc_get_category(request):
     if request.method == "GET":
         resource_type = request.GET.get("resource_type")
         category_id = request.GET.get("category_id")
-        if not category_id:
-            category_id=-1
+        if category_id == "-1":
+            category_id = -1
         else:
             category_id = int(category_id)
         resources = "video"
