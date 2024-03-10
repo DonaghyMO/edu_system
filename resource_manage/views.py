@@ -149,11 +149,14 @@ def list_texts(request):
         else:
             texts = Text.objects.all()
         for text in texts:
-            text_type = os.path.splitext(text.text_file.path)[1]
-            if text_type in [".doc", ".docx"]:
-                from tools import doc_reader
-                content = doc_reader.transfer_doc2string(text.text_file.path)
-
+            try:
+                text_type = os.path.splitext(text.text_file.path)[1]
+                if text_type in [".doc", ".docx"]:
+                    from tools import doc_reader
+                    content = doc_reader.transfer_doc2string(text.text_file.path)
+            except Exception as e:
+                print(text.id)
+                continue
             else:
                 with open(text.text_file.path) as f:
                     content = f.read()
