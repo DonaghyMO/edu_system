@@ -1,12 +1,14 @@
 import os, base64
 from django.shortcuts import render, redirect
 from resource_manage.forms import VideoUploadForm, AudioUploadForm, TextUploadForm, TextUpdateForm, \
-    TextMultipleUploadForm,VideoMultipleUploadForm,AudioMultipleUploadForm
+    TextMultipleUploadForm, VideoMultipleUploadForm, AudioMultipleUploadForm
 from resource_manage.models import Video, Audio, Text
 from my_decorater import check_login
 from django.http import JsonResponse, FileResponse
 from django.core.exceptions import ObjectDoesNotExist
 from category.exception import NotValidCategory
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from docx.opc.exceptions import PackageNotFoundError
 from .excptions import *
 import traceback
 from tools.utils import list_category
@@ -48,15 +50,26 @@ def upload_video(request):
 def list_videos(request):
     category_search = request.GET.get("category_search")
     name_search = request.GET.get("name_search")
+    page = request.GET.get('page', 1)
     if category_search:
         videos = Video.objects.filter(category__contains=category_search)
     elif name_search:
         videos = Video.objects.filter(title__contains=name_search)
     else:
         videos = Video.objects.all()
+    paginator = Paginator(videos, 40)
+    page_obj = paginator.get_page(page)
+    try:
+        videos = paginator.page(page)
+    except PageNotAnInteger:
+        # 如果页码不是整数，展示第一页
+        videos = paginator.page(1)
+    except EmptyPage:
+        # 如果页码超出范围，展示最后一页的结果
+        videos = paginator.page(paginator.num_pages)
     # for video in videos:
     #     video.category =
-    return render(request, 'resource_manage/video/videos_list.html', {'videos': videos})
+    return render(request, 'resource_manage/video/videos_list.html', {'videos': videos,"page_obj":page_obj})
 
 
 @check_login
@@ -87,14 +100,25 @@ def delete_video(request, video_id):
 def list_audios(request):
     category_search = request.GET.get("category_search")
     name_search = request.GET.get("name_search")
+    page = request.GET.get('page', 1)
     if category_search:
         audios = Audio.objects.filter(category__contains=category_search)
     elif name_search:
         audios = Audio.objects.filter(title__contains=name_search)
     else:
         audios = Audio.objects.all()
+    paginator = Paginator(audios, 40)
+    page_obj = paginator.get_page(page)
+    try:
+        audios = paginator.page(page)
+    except PageNotAnInteger:
+        # 如果页码不是整数，展示第一页
+        audios = paginator.page(1)
+    except EmptyPage:
+        # 如果页码超出范围，展示最后一页的结果
+        audios = paginator.page(paginator.num_pages)
 
-    return render(request, 'resource_manage/audio/audio_list.html', {'audios': audios})
+    return render(request, 'resource_manage/audio/audio_list.html', {'audios': audios, "page_obj": page_obj})
 
 
 @check_login
@@ -142,17 +166,33 @@ def list_texts(request):
     if request.method == 'GET':
         category_search = request.GET.get("category_search")
         name_search = request.GET.get("name_search")
+        page = request.GET.get('page', 1)
+
         if category_search:
             texts = Text.objects.filter(category__contains=category_search)
         elif name_search:
             texts = Text.objects.filter(title__contains=name_search)
         else:
             texts = Text.objects.all()
+        paginator = Paginator(texts, 40)
+        page_obj = paginator.get_page(page)
+        try:
+            texts = paginator.page(page)
+        except PageNotAnInteger:
+            # 如果页码不是整数，展示第一页
+            texts = paginator.page(1)
+        except EmptyPage:
+            # 如果页码超出范围，展示最后一页的结果
+            texts = paginator.page(paginator.num_pages)
+
         for text in texts:
             text_type = os.path.splitext(text.text_file.path)[1]
             if text_type in [".doc", ".docx"]:
                 from tools import doc_reader
-                content = doc_reader.transfer_doc2string(text.text_file.path)
+                try:
+                    content = doc_reader.transfer_doc2string(text.text_file.path)
+                except PackageNotFoundError as e:
+                    print(text.id)
             else:
                 with open(text.text_file.path) as f:
                     content = f.read()
@@ -168,6 +208,8 @@ def list_texts(request):
             }
             text_list.append(tmp)
         cats = [(item.id, item.name) for item in list_category(not_in=[-1])]
+        return render(request, 'resource_manage/text/text_list.html',
+                      {'texts': text_list, 'cats': cats, "page_obj": page_obj})
     elif request.method == 'POST':
         if not request.POST.get("category_id"):
             raise NotValidCategory()
@@ -180,7 +222,7 @@ def list_texts(request):
             new_form.instance.category_id = category_id
             new_form.instance.category = category
             new_form.save()
-        return redirect('text_list')
+        return redirect('/texts/?page=1')
 
     return render(request, 'resource_manage/text/text_list.html', {'texts': text_list, 'cats': cats})
 
