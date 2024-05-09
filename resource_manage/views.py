@@ -375,8 +375,6 @@ def download_resource(request, resource_type, resource_name):
         file_path = os.path.join(BASE_DIR, 'upload', 'language', resource_name)
     else:
         file_path = os.path.join(BASE_DIR, 'static', 'card_pic.jpg', )
-    print(resource_type)
-    print(resource_name)
     file = open(file_path, 'rb')
     response = FileResponse(file)
     if resource_type == 4:
