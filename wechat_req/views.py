@@ -327,7 +327,8 @@ def wc_resource_detail(request):
         }, status=200)
     description = resource.description
     title = resource.title
-    resource_url = "resource/download/{}/{}".format(resource_type, resource_name)
+    # resource_url = "resource/download/{}/{}".format(resource_type, resource_name)
+    resource_url = "media/videos/{}".format( resource_name)
     data = {
         "url": resource_url,
         "description": description,
