@@ -440,7 +440,7 @@ def wc_get_category(request):
         elif resource_type == "text":
             resources = [{"id": item.id, "name": item.title} for item in Text.objects.filter(category_id=category_id)]
         # 排序
-        resources = sorted(resources, key=lambda x:x['name'])
+        resources = sorted(resources, key=lambda x:int(x['name'].split('.')[0]))
 
         # 获取当前目录在树中节点
         root = get_category_node(category_id)
