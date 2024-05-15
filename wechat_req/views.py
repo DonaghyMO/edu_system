@@ -439,6 +439,8 @@ def wc_get_category(request):
             resources = [{"id": item.id, "name": item.title} for item in Audio.objects.filter(category_id=category_id)]
         elif resource_type == "text":
             resources = [{"id": item.id, "name": item.title} for item in Text.objects.filter(category_id=category_id)]
+        # 排序
+        resources = sorted(resources, key=lambda x:x['name'])
 
         # 获取当前目录在树中节点
         root = get_category_node(category_id)
