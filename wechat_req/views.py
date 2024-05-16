@@ -445,7 +445,7 @@ def wc_get_category(request):
         # 排序
         try:
             resources = sorted(resources, key=lambda x:int(re.match(r'\d+',x['name']).group()))
-        except Exception:
+        except AttributeError as e:
             resources = new_resources
 
         # 获取当前目录在树中节点
