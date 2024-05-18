@@ -120,30 +120,30 @@ DATABASES = {
     }
 }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': '/root/mo/edu_system/django_error.log',
-        },
-    },
-    'formatters': {
-        'custom': {
-            'format': '%(asctime)s - %(levelname)s - %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': '/root/mo/edu_system/django_error.log',
+#         },
+#     },
+#     'formatters': {
+#         'custom': {
+#             'format': '%(asctime)s - %(levelname)s - %(message)s',
+#             'datefmt': '%Y-%m-%d %H:%M:%S',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'ERROR',
+#             'propagate': True,
+#         },
+#     },
+# }
 
 
 # Password validation

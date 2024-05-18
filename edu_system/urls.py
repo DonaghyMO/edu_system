@@ -64,6 +64,7 @@ urlpatterns = [
     path('wechat/notification/delete', wechat_view.delete_notification, name='delete_notification'),
     path('wechat/notification/wx_notification', wechat_view.wc_get_notifications),
     path('wechat/login', wechat_view.wc_login, name='wc_login'),
+    path('wechat/get_user_info',wechat_view.wx_get_user_info,name="wc_user_info"),
     path('wechat/resource_list', wechat_view.wc_get_resource_list, name='wc_resource_list'),
     path('wechat/wc_search_resource', wechat_view.wc_search_resource, name='wc_search_resource'),
     path('wechat/resource_detail', wechat_view.wc_resource_detail, name='wc_resource_detail'),

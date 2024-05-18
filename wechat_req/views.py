@@ -139,6 +139,40 @@ def wc_login(request):
     return JsonResponse(rejson, status=200)
 
 
+def wx_get_user_info(request):
+    """
+    看本地有没有用户信息
+    """
+    if request.method != 'POST':
+        return HttpResponse("请求方式有误", status=400)
+    data = json.loads(request.body.decode('utf-8'))
+    code = data.get("code")
+    print(code)
+    # 获取openid
+    url = f'https://api.weixin.qq.com/sns/jscode2session?appid=wxd44159a044a585ad&secret=bc0363f718cdfb030d6d867f32b6d521&js_code={code}&grant_type=authorization_code'
+    response = requests.get(url)
+    rdata = response.json()
+    # 从微信服务器返回的数据中获取用户的唯一标识 openid
+    openid = rdata.get('openid')
+    print(openid)
+    # 获取sessionkey
+    session_key = rdata.get("session_key")
+    try:
+        user = Teacher.objects.get(openid=openid)
+        user_type = "teacher"
+    except ObjectDoesNotExist:
+        try:
+            user = Student.objects.get(openid=openid)
+            user_type = "student"
+        except ObjectDoesNotExist:
+            # 没有此用户
+            rejson = {"message": "没有此用户", "status": "fail"}
+            return JsonResponse(rejson,status=200)
+    token = generate_token(openid, session_key)
+    rejson = {"message": "有此用户", "status": "success", "user_id": user.id,"user_type":user_type,"avatar_url":user.avatar_url,"nick_name":user.nick_name,"token":token}
+    return JsonResponse(rejson, status=200)
+
+
 def wc_register(request):
     """
     注册功能
