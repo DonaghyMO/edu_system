@@ -13,7 +13,7 @@ from category.models import Category
 import requests
 from anytree import find, PreOrderIter, Node, RenderTree
 from backend.dir_tree import get_category_tree_dic, get_category_tree, get_category_node
-from .utils import check_invite_code
+from .utils import check_invite_code, generate_token, verify_token
 from edu_system.settings import BASE_DIR
 import os
 from django.core.exceptions import ObjectDoesNotExist
@@ -109,22 +109,33 @@ def wc_login(request):
     if request.method != 'POST':
         return HttpResponse("请求方式有误", status=400)
     data = json.loads(request.body.decode('utf-8'))
-    user_type = data.get("user_type")
-    password = data.get("password")
-    username = data.get("username")
-
-    # 检查用户是否已经存在，如果不存在，则创建用户
+    code = data.get("code")
+    nick_name = data.get("nickName")
+    avatar_url = data.get("userAvatarUrl")
+    # 获取openid
+    url = f'https://api.weixin.qq.com/sns/jscode2session?appid=wxd44159a044a585ad&secret=bc0363f718cdfb030d6d867f32b6d521&js_code={code}&grant_type=authorization_code'
+    response = requests.get(url)
+    rdata = response.json()
+    # 从微信服务器返回的数据中获取用户的唯一标识 openid
+    openid = rdata.get('openid')
+    # 获取sessionkey
+    session_key = rdata.get("session_key")
+    # 根据openid去后端查有没有用户
     try:
-        # TODO：校验是否是老师用户
-        user = Teacher.objects.get(username=username) if user_type == "teacher" else Student.objects.get(
-            username=username)
-        if user.password != password:
-            return JsonResponse({"message": "密码错误", "status": "fail"}, status=200)
+        user = Teacher.objects.get(openid=openid)
+        user_type = "teacher"
     except ObjectDoesNotExist:
-        return JsonResponse({"message": "用户不存在", "status": "fail"}, status=200)
-    # 这里需要自行实现用户登录逻辑，例如使用 Token 或 Session 等方式
-    rejson = {"message": "登录成功", "status": "success", "user_id": user.id, "user_type": user_type,
-              "openid": user.openid}
+        try:
+            user = Student.objects.get(openid=openid)
+            user_type = "student"
+        except ObjectDoesNotExist:
+            # 没有此用户
+            user = Student(openid=openid, nick_name=nick_name, avatar_url=avatar_url)
+            user.save()
+            user = Student.objects.get(openid=openid)
+            user_type = "student"
+    token = generate_token(openid, session_key)
+    rejson = {"message": "登录成功", "status": "success", "token": token, "user_id": user.id,"user_type":user_type}
     return JsonResponse(rejson, status=200)
 
 
@@ -329,12 +340,12 @@ def wc_resource_detail(request):
         }, status=200)
     description = resource.description
     title = resource.title
-    resource_dir=""
-    if(resource_type=="video"):
+    resource_dir = ""
+    if (resource_type == "video"):
         resource_dir = "videos"
-    elif(resource_type=="audio"):
+    elif (resource_type == "audio"):
         resource_dir = "audio"
-    elif(resource_type=="text"):
+    elif (resource_type == "text"):
         resource_dir = "text"
     resource_url = "media/{}/{}".format(resource_dir, resource_name)
 
@@ -444,7 +455,7 @@ def wc_get_category(request):
         new_resources = resources
         # 排序
         try:
-            resources = sorted(resources, key=lambda x:int(re.match(r'\d+',x['name']).group()))
+            resources = sorted(resources, key=lambda x: int(re.match(r'\d+', x['name']).group()))
         except AttributeError as e:
             resources = new_resources
 

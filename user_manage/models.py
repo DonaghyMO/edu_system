@@ -20,6 +20,7 @@ class Teacher(models.Model):
     # 微信openid，一个用户和一个小程序对应一个openid
     openid = models.CharField(max_length=200,default="")
     wechat_name = models.CharField(max_length=200,default="")
+    avatar_url = models.CharField(max_length=200,default="")
 
     """
     增删改查
@@ -52,4 +53,5 @@ class Student(models.Model):
     # 微信openid，一个用户和一个小程序对应一个openid
     openid = models.CharField(max_length=200,default="")
     wechat_name = models.CharField(max_length=200,default="")
+    avatar_url = models.CharField(max_length=200,default="")
 
