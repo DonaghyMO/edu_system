@@ -9,7 +9,8 @@
     "login": "密码",
     "login_button": "登录",
     "no_account": "没有帐号",
-    "register": "注册"
+    "register": "注册",
+    "input_nickname": "请输入昵称"
   },
   "register": {
     "username": "用户名",

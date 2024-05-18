@@ -9,7 +9,8 @@
     "login": "password",
     "login_button": "Log in",
     "no_account": "no account",
-    "register": "register"
+    "register": "register",
+    "input_nickname": "please input nickname"
   },
   "register": {
     "username": "username",

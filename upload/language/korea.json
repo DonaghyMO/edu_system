@@ -9,7 +9,8 @@
     "login": "비밀번호",
     "login_button": "로그인",
     "no_account": "계정이 없습니다",
-    "register": "등록하다"
+    "register": "등록하다",
+    "input_nickname": "닉네임을 입력하세요"
   },
   "register": {
     "username": "사용자 이름",
