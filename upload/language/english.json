@@ -10,7 +10,8 @@
     "login_button": "Log in",
     "no_account": "no account",
     "register": "register",
-    "input_nickname": "please input nickname"
+    "input_nickname": "please input nickname",
+    "input_avatar": "please set avatar"
   },
   "register": {
     "username": "username",
