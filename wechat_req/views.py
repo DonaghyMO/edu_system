@@ -176,7 +176,7 @@ def wx_get_user_info(request):
             return JsonResponse(rejson, status=200)
     token = generate_token(openid, session_key)
     rejson = {"message": "有此用户", "status": "success", "user_id": user.id, "user_type": user_type,
-              "avatar_url": user.avatar_url, "nick_name": user.nick_name, "token": token}
+              "avatar_url": user.avatar_url, "nick_name": user.nick_name, "token": token,"user_name":user.username}
     return JsonResponse(rejson, status=200)
 
 
