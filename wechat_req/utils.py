@@ -1,4 +1,6 @@
 import logging
+import string
+import random
 
 import jwt
 from datetime import datetime, timedelta
@@ -39,6 +41,12 @@ def verify_token(token):
     return data
 
 
+def generate_random_nickname(length=8):
+    # 定义字符集：小写字母、大写字母和数字
+    characters = string.ascii_lowercase + string.digits
+    # 从字符集中随机选择指定长度的字符
+    random_nickname = ''.join(random.choice(characters) for _ in range(length))
+    return random_nickname
+
 if __name__ == '__main__':
-    s = generate_token("ddddd", "ffasfsf")
-    print(verify_token(s))
+    print(generate_random_nickname(8))

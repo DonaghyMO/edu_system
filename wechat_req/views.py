@@ -13,7 +13,7 @@ from category.models import Category
 import requests
 from anytree import find, PreOrderIter, Node, RenderTree
 from backend.dir_tree import get_category_tree_dic, get_category_tree, get_category_node
-from .utils import check_invite_code, generate_token, verify_token
+from .utils import check_invite_code, generate_token, verify_token,generate_random_nickname
 from edu_system.settings import BASE_DIR
 import os
 from django.core.exceptions import ObjectDoesNotExist
@@ -101,6 +101,11 @@ def delete_notification(request):
         notification.save()
     return HttpResponse("已删除", status=200)
 
+def gen_username():
+    user_name = generate_random_nickname(8)
+    while(Student.objects.filter(username=user_name) or Teacher.objects.filter(username=user_name)):
+        user_name = generate_random_nickname(8)
+    return user_name
 
 def wc_login(request):
     """
@@ -130,12 +135,13 @@ def wc_login(request):
             user_type = "student"
         except ObjectDoesNotExist:
             # 没有此用户
-            user = Student(openid=openid, nick_name=nick_name, avatar_url=avatar_url)
+            user_name = gen_username()
+            user = Student(openid=openid, nick_name=nick_name, avatar_url=avatar_url,username=user_name)
             user.save()
             user = Student.objects.get(openid=openid)
             user_type = "student"
     token = generate_token(openid, session_key)
-    rejson = {"message": "登录成功", "status": "success", "token": token, "user_id": user.id,"user_type":user_type}
+    rejson = {"message": "登录成功", "status": "success", "token": token, "user_id": user.id, "user_type": user_type,"username":user.username}
     return JsonResponse(rejson, status=200)
 
 
@@ -167,9 +173,10 @@ def wx_get_user_info(request):
         except ObjectDoesNotExist:
             # 没有此用户
             rejson = {"message": "没有此用户", "status": "fail"}
-            return JsonResponse(rejson,status=200)
+            return JsonResponse(rejson, status=200)
     token = generate_token(openid, session_key)
-    rejson = {"message": "有此用户", "status": "success", "user_id": user.id,"user_type":user_type,"avatar_url":user.avatar_url,"nick_name":user.nick_name,"token":token}
+    rejson = {"message": "有此用户", "status": "success", "user_id": user.id, "user_type": user_type,
+              "avatar_url": user.avatar_url, "nick_name": user.nick_name, "token": token}
     return JsonResponse(rejson, status=200)
 
 
